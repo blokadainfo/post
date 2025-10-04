@@ -1,0 +1,8 @@
+@font-face {
+  font-family: 'AkzidenzGrotesk';
+  src: url('/fonts/akzidenz-grotesk-pro-bold-condensed.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-stretch: condensed;
+  font-display: swap;
+}

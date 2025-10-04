@@ -1,0 +1,55 @@
+---
+import "@styles/global.css";
+import "@styles/fonts.css";
+import { siteMeta } from "@lib/site";
+---
+
+<!doctype html>
+<html style="background-color: black;" lang={siteMeta.locale}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href={siteMeta.favicon} />
+    <title>{siteMeta.title}</title>
+    <meta name="description" content={siteMeta.description} />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="darkreader-lock" />
+    <meta name="color-scheme" content="dark" />
+    <meta property="og:title" content={siteMeta.title} />
+    <meta property="og:description" content={siteMeta.description} />
+    <meta property="og:type" content="website" />
+    <link
+      rel="preload"
+      href="/fonts/akzidenz-grotesk-pro-bold-condensed.otf"
+      as="font"
+      type="font/otf"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>
+
+<style>
+  html,
+  body {
+    background-color: black;
+    margin: 0;
+    width: 100svw;
+    height: 100svh;
+
+    /* intro fade-in animation props */
+    opacity: 0;
+    animation: fadeIn 1s ease-in-out forwards;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0.0001; /* weird Chromium bug if it's 0 */
+    }
+    to {
+      opacity: 1;
+    }
+  }
+</style>

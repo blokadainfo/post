@@ -1,0 +1,10 @@
+---
+import Layout from "@layouts/Layout.astro";
+import PostStudio from "@components/PostStudio.svelte";
+---
+
+<Layout>
+  <main class="max-w-[1200px] mx-auto p-6">
+    <PostStudio client:only />
+  </main>
+</Layout>
