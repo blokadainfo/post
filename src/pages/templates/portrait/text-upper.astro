@@ -5,7 +5,10 @@ import Logo from "@assets/logo.svg";
 
 <Layout viewportWidth={1080}>
   <!-- 1080×1350 canvas -->
-  <div id="post" class="relative w-[1080px] h-[1350px] overflow-hidden bg-black">
+  <div
+    id="post"
+    class="relative w-[1080px] h-[1350px] overflow-hidden bg-black"
+  >
     <!-- Background -->
     <img
       id="bg"
@@ -19,12 +22,14 @@ import Logo from "@assets/logo.svg";
       id="shade"
       class="absolute inset-0 z-10 bg-black pointer-events-none"
       style="opacity:0;"
-    ></div>
+    >
+    </div>
 
     <!-- Gradient overlay -->
     <div
-      class="absolute inset-0 z-20 w-full h-full bg-gradient-to-t from-black from-10% to-transparent"
-    ></div>
+      class="absolute inset-0 z-20 w-full h-full bg-gradient-to-t from-black from-10% to-black/0"
+    >
+    </div>
 
     <!-- Foreground content -->
     <div
@@ -43,7 +48,8 @@ import Logo from "@assets/logo.svg";
         <p
           id="paragraph"
           class="text-[46px] leading-tight text-justify hyphens-auto break-words drop-shadow-lg"
-        ></p>
+        >
+        </p>
 
         <!-- Accent lines -->
         <div class="mt-8 space-y-6">
@@ -60,6 +66,12 @@ import Logo from "@assets/logo.svg";
       <div class="text-[42px] absolute right-9 bottom-12 drop-shadow-lg">
         <span>blokada.info</span>
       </div>
+    </div>
+
+    <!-- Hairline fix -->
+    <div
+      class="pointer-events-none absolute inset-0 z-40 shadow-[inset_0_0_0_1px_#000]"
+    >
     </div>
   </div>
 </Layout>
