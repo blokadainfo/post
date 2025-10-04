@@ -136,14 +136,14 @@
         src={templatePath}
         width={native.w}
         height={native.h}
-        style="border:0;pointer-events:none;"
+        style={`border:0;pointer-events:none;visibility:${loading ? 'hidden' : 'visible'};`}
         scrolling="no"
       ></iframe>
     </div>
 
     {#if loading}
       <div
-        class="absolute inset-0 grid place-items-center bg-black"
+        class="absolute inset-0 grid place-items-center"
         style={`width:${scaledW}px;height:${scaledH}px;`}
         aria-live="polite"
       >
