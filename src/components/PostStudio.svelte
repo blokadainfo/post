@@ -59,10 +59,15 @@
   }
 
   function buildFilename() {
-    const aspectSlug = aspectKey;
-    const tmplSlug = templatePath.split('/').slice(-1)[0] || 'template';
-    const suffix = generate2x ? '@2x' : '';
-    return `post-${aspectSlug}-${tmplSlug}${suffix}.png`;
+    const now = new Date();
+    const yy = String(now.getFullYear()).slice(-2);
+    const MM = String(now.getMonth() + 1).padStart(2, '0');
+    const dd = String(now.getDate()).padStart(2, '0');
+    const hh = String(now.getHours()).padStart(2, '0');
+    const mm = String(now.getMinutes()).padStart(2, '0');
+    const ss = String(now.getSeconds()).padStart(2, '0');
+
+    return `post-${yy}${MM}${dd}${hh}${mm}${ss}.png`;
   }
 
   function downloadBlob(blob: Blob, filename: string) {
