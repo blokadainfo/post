@@ -1,0 +1,8 @@
+{
+  "name": "binfo-post",
+  "compatibility_date": "2025-10-04",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "404-page",
+  },
+}
