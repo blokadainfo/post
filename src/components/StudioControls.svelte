@@ -263,7 +263,7 @@
       {#each ASPECTS as a}
         <button
           type="button"
-          class="cursor-pointer rounded-xl border px-3 py-2 text-sm transition
+          class="cursor-pointer rounded-xl border px-3 py-2 text-sm transition accent-[#50C2BE]
                  {aspectKey === a.key
             ? 'bg-neutral-800 border-neutral-700'
             : 'bg-neutral-900 border-neutral-800 hover:bg-neutral-800'}"
@@ -292,7 +292,7 @@
       <button
         bind:this={tplButtonEl}
         type="button"
-        class="cursor-pointer w-full rounded-xl border border-neutral-800 bg-neutral-900 px-3 py-2
+        class="cursor-pointer w-full rounded-xl border border-neutral-800 bg-neutral-900 px-3 py-2 accent-[#50C2BE]
                text-left flex items-center justify-between gap-3 hover:border-neutral-700 transition"
         aria-haspopup="listbox"
         aria-expanded={tplOpen}
@@ -476,7 +476,7 @@
             {fieldCfg("credit")?.label ?? "Picture source / credit"}
           </span>
           <input
-            class="w-full rounded-xl bg-neutral-800 px-3 py-2"
+            class="w-full rounded-xl bg-neutral-800 accent-[#50C2BE] px-3 py-2"
             placeholder="Blokada INFO"
             bind:value={credit}
           />
@@ -495,7 +495,7 @@
           </span>
           <textarea
             rows={fieldCfg("paragraph")?.rows ?? 6}
-            class="w-full rounded-xl bg-neutral-800 px-3 py-2"
+            class="w-full rounded-xl bg-neutral-800 accent-[#50C2BE] px-3 py-2"
             bind:value={paragraph}
           ></textarea>
         </label>
@@ -527,7 +527,7 @@
     <button
       type="button"
       class="w-[200px] inline-flex justify-center items-center gap-2 rounded-2xl bg-[#50C2BE] hover:bg-teal-800 disabled:hover:bg-[#50C2BE]
-           active:bg-[#50C2BE] disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed
+           active:bg-[#50C2BE] disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed accent-[#50C2BE]
            text-neutral-900 font-semibold px-4 py-2 transition-colors"
       onclick={onGenerate}
       disabled={!activeTpl || requiredMissing() || isGenerating}
