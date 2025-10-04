@@ -1,3 +1,5 @@
+/* THIS IS JUST A LEGACY COPY: Look at TemplateClient.svelte */
+
 import { snapdom } from '@zumer/snapdom';
 
 /* =========================

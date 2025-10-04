@@ -3,7 +3,7 @@ import '@styles/global.css';
 import '@styles/fonts.css';
 import { siteMeta } from '@lib/site';
 
-import clientScriptUrl from '@scripts/template-client.ts?url';
+import TemplateClientMount from '@components/TemplateClientMount.astro';
 ---
 
 <!doctype html>
@@ -41,10 +41,9 @@ import clientScriptUrl from '@scripts/template-client.ts?url';
         height: 100%;
       }
     </style>
-
-    <script type="module" src={clientScriptUrl}></script>
   </head>
   <body class="h-full">
     <slot />
+    <TemplateClientMount />
   </body>
 </html>
