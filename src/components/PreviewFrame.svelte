@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { NATIVE_BY_KEY, type AspectKey } from "@lib/aspects";
+  import { NATIVE_BY_KEY, type AspectKey } from '@lib/aspects';
 
   // ---- props ----
   const { templatePath, bgDataURL, paragraph, credit, aspectKey, darken } = $props<{
@@ -25,29 +25,29 @@
   const pending = new Map<number, (blob: Blob) => void>();
 
   type Payload = {
-    type: "SET_DATA";
+    type: 'SET_DATA';
     bgDataURL: string | null;
     paragraph: string;
     credit: string;
     darken: number;
   };
-  let latest: Payload = { type: "SET_DATA", bgDataURL, paragraph, credit, darken };
+  let latest: Payload = { type: 'SET_DATA', bgDataURL, paragraph, credit, darken };
 
   let pushTimer: number | undefined;
   function pushLatest() {
     if (!ready || !iframeEl?.contentWindow) return;
     if (pushTimer) window.clearTimeout(pushTimer);
     pushTimer = window.setTimeout(() => {
-      iframeEl!.contentWindow!.postMessage(latest, "*");
+      iframeEl!.contentWindow!.postMessage(latest, '*');
     }, 0);
   }
 
   $effect(() => {
-    latest = { type: "SET_DATA", bgDataURL, paragraph, credit, darken };
+    latest = { type: 'SET_DATA', bgDataURL, paragraph, credit, darken };
     pushLatest();
   });
 
-  let lastSrc = "";
+  let lastSrc = '';
   $effect(() => {
     if (!templatePath || templatePath === lastSrc) return;
     lastSrc = templatePath;
@@ -55,17 +55,17 @@
     loading = true;
   });
 
-  window.addEventListener("message", (e) => {
+  window.addEventListener('message', (e) => {
     if (!iframeEl || e.source !== iframeEl.contentWindow) return;
     const { type, id, blob } = e.data ?? {};
 
-    if (type === "READY") {
+    if (type === 'READY') {
       ready = true;
       loading = false;
       pushLatest();
     }
 
-    if (type === "SNAPSHOT_RESULT" && id && blob) {
+    if (type === 'SNAPSHOT_RESULT' && id && blob) {
       const resolve = pending.get(id);
       if (resolve) {
         pending.delete(id);
@@ -80,7 +80,7 @@
       if (!ready) await waitForReady(2000).catch(() => {});
       const id = ++msgSeq;
       pending.set(id, resolve);
-      iframeEl.contentWindow.postMessage({ type: "SNAPSHOT", scale, id }, "*");
+      iframeEl.contentWindow.postMessage({ type: 'SNAPSHOT', scale, id }, '*');
     });
   }
 
@@ -88,19 +88,19 @@
     return new Promise<void>((res, rej) => {
       if (ready) return res();
       const win = iframeEl?.contentWindow;
-      if (!win) return rej(new Error("iframe not mounted"));
+      if (!win) return rej(new Error('iframe not mounted'));
       const timer = setTimeout(() => {
-        window.removeEventListener("message", onMsg as any);
-        rej(new Error("READY timeout"));
+        window.removeEventListener('message', onMsg as any);
+        rej(new Error('READY timeout'));
       }, timeoutMs);
       function onMsg(e: MessageEvent) {
-        if (e.source === win && e.data?.type === "READY") {
+        if (e.source === win && e.data?.type === 'READY') {
           clearTimeout(timer);
-          window.removeEventListener("message", onMsg as any);
+          window.removeEventListener('message', onMsg as any);
           res();
         }
       }
-      window.addEventListener("message", onMsg as any);
+      window.addEventListener('message', onMsg as any);
     });
   }
 
@@ -143,11 +143,13 @@
 
     {#if loading}
       <div
-        class="absolute inset-0 grid place-items-center"
+        class="absolute inset-0 grid place-items-center bg-black"
         style={`width:${scaledW}px;height:${scaledH}px;`}
         aria-live="polite"
       >
-        <div class="h-8 w-8 rounded-full border-2 border-white/30 border-t-white animate-spin"></div>
+        <div
+          class="h-8 w-8 animate-spin rounded-full border-2 border-white/30 border-t-white"
+        ></div>
         <span class="sr-only">Loading preview…</span>
       </div>
     {/if}
@@ -155,7 +157,7 @@
     <div style={`width:${scaledW}px;height:${scaledH}px;`} aria-hidden="true"></div>
   {:else}
     <div
-      class="cursor-default grid place-items-center text-neutral-400 rounded-lg border border-neutral-800 bg-neutral-900/50"
+      class="grid cursor-default place-items-center rounded-lg border border-neutral-800 bg-neutral-900/50 text-neutral-400"
       style={`width:${scaledW}px;height:${scaledH}px;`}
     >
       Choose a template to preview
