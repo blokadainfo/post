@@ -20,7 +20,7 @@
     if (!belongs && templatePath) templatePath = '';
   });
 
-  function onBG(dataURL: string) {
+  function onBG(dataURL: string | null) {
     bgDataURL = dataURL;
   }
   function onChange(payload: {

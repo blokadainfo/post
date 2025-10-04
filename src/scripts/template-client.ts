@@ -107,7 +107,13 @@ window.addEventListener('message', async (e: MessageEvent<Msg>) => {
 
   if (data.type === 'SET_DATA') {
     // Background image
-    if (bgEl && data.bgDataURL) bgEl.src = data.bgDataURL;
+    if ('bgDataURL' in data && bgEl) {
+      if (data.bgDataURL) {
+        bgEl.src = data.bgDataURL;
+      } else {
+        bgEl.removeAttribute('src');
+      }
+    }
 
     // Text
     if (pEl) pEl.textContent = data.paragraph ?? '';

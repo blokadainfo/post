@@ -4,7 +4,7 @@
 
   // ---- callbacks ----
   const { onBG, onChange, onGenerate, isGenerating } = $props<{
-    onBG: (dataURL: string, file: File) => void;
+    onBG: (dataURL: string | null, file: File) => void;
     onChange: (payload: {
       aspectKey: AspectKey;
       templatePath: string;
@@ -240,6 +240,7 @@
     dzFileName = '';
     dzPreview = null;
     if (dzInputEl) dzInputEl.value = '';
+    onBG?.(null);
   }
 </script>
 
@@ -407,19 +408,19 @@
               <img
                 src={dzPreview}
                 alt=""
-                class="h-12 w-12 rounded-md object-cover ring-1 ring-neutral-700"
+                class="h-9 w-9 rounded-md object-cover ring-1 ring-neutral-700"
               />
             {/if}
           </div>
           {#if dzPreview}
             <button
               type="button"
-              class="absolute top-2 right-2 rounded-md bg-neutral-800/80 px-2 py-1 text-xs text-neutral-200 hover:bg-neutral-700"
+              class="absolute top-2 right-2 flex cursor-pointer items-center justify-center rounded-md bg-neutral-800/80 px-2 py-1 text-xs text-neutral-200 hover:bg-neutral-700"
               onclick={(e) => {
                 e.stopPropagation();
                 clearDz();
               }}
-              aria-label="Clear image">Clear</button
+              aria-label="Clear image">✕</button
             >
           {/if}
         </div>
