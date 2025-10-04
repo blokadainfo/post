@@ -13,18 +13,18 @@
   let generate2x = $state<boolean>(true);
   let darken = $state<number>(0);
 
+  let isGenerating = $state(false);
+
   $effect(() => {
-    const belongs = TEMPLATES.find(
-      (t: { path: string; aspect: string }) =>
-        t.path === templatePath && t.aspect === aspectKey
+    const belongs = TEMPLATES.some(
+      (t) => t.path === templatePath && t.aspect === aspectKey
     );
-    if (!belongs) templatePath = "";
+    if (!belongs && templatePath) templatePath = "";
   });
 
   function onBG(dataURL: string) {
     bgDataURL = dataURL;
   }
-
   function onChange(payload: {
     aspectKey: AspectKey;
     templatePath: string;
@@ -47,13 +47,16 @@
   async function onGenerate() {
     if (!previewRef) return;
     const scale = generate2x ? 2 : 1;
+
+    isGenerating = true;
     try {
       const blob = await previewRef.snapshot(scale);
-      const name = buildFilename();
-      downloadBlob(blob, name);
+      downloadBlob(blob, buildFilename());
     } catch (e) {
       console.error("Snapshot failed", e);
       alert("Snapshot failed. Check your template page console for errors.");
+    } finally {
+      isGenerating = false;
     }
   }
 
@@ -78,7 +81,7 @@
 
 <div class="w-full flex flex-wrap justify-center gap-5">
   <section class="w-full lg:w-auto h-fit">
-    <StudioControls {onBG} {onChange} {onGenerate} />
+    <StudioControls {onBG} {onChange} {onGenerate} {isGenerating} />
   </section>
 
   <section

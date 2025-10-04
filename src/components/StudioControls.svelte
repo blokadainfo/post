@@ -3,7 +3,7 @@
   import { TEMPLATES, type TemplateDef } from "@lib/templates";
 
   // ---- callbacks ----
-  const { onBG, onChange, onGenerate } = $props<{
+  const { onBG, onChange, onGenerate, isGenerating } = $props<{
     onBG: (dataURL: string, file: File) => void;
     onChange: (payload: {
       aspectKey: AspectKey;
@@ -14,6 +14,7 @@
       darken: number;
     }) => void;
     onGenerate: () => void;
+    isGenerating: boolean;
   }>();
 
   // ---- state ----
@@ -262,7 +263,7 @@
       {#each ASPECTS as a}
         <button
           type="button"
-          class="rounded-xl border px-3 py-2 text-sm transition
+          class="cursor-pointer rounded-xl border px-3 py-2 text-sm transition
                  {aspectKey === a.key
             ? 'bg-neutral-800 border-neutral-700'
             : 'bg-neutral-900 border-neutral-800 hover:bg-neutral-800'}"
@@ -283,7 +284,7 @@
 
     {#if !tplOptions.length}
       <div
-        class="h-[42px] flex items-center rounded-xl bg-neutral-900 border border-neutral-800 px-3 py-2 text-xs text-amber-400"
+        class="cursor-default h-[42px] flex items-center rounded-xl bg-neutral-900 border border-neutral-800 px-3 py-2 text-xs text-amber-400"
       >
         No templates for this aspect yet.
       </div>
@@ -291,8 +292,8 @@
       <button
         bind:this={tplButtonEl}
         type="button"
-        class="w-full rounded-xl border border-neutral-800 bg-neutral-900 px-3 py-2 text-left
-               flex items-center justify-between gap-3 hover:border-neutral-700 transition"
+        class="cursor-pointer w-full rounded-xl border border-neutral-800 bg-neutral-900 px-3 py-2
+               text-left flex items-center justify-between gap-3 hover:border-neutral-700 transition"
         aria-haspopup="listbox"
         aria-expanded={tplOpen}
         aria-controls="tpl-listbox"
@@ -459,7 +460,7 @@
             max={fieldCfg("shade")?.max ?? 100}
             step={fieldCfg("shade")?.step ?? 1}
             bind:value={darken}
-            class="w-full accent-[#DB2340]"
+            class="cursor-pointer w-full accent-[#DB2340]"
           />
         </label>
       </div>
@@ -502,7 +503,7 @@
     {/if}
   {:else}
     <div
-      class="h-[42px] flex items-center rounded-xl bg-neutral-900 border border-neutral-800 px-3 py-2 text-xs text-amber-400"
+      class="cursor-default h-[42px] flex items-center rounded-xl bg-neutral-900 border border-neutral-800 px-3 py-2 text-xs text-amber-400"
     >
       Choose a template to see its available controls.
     </div>
@@ -525,17 +526,29 @@
 
     <button
       type="button"
-      class="rounded-2xl bg-[#50C2BE] hover:bg-teal-800 disabled:hover:bg-[#50C2BE] active:bg-[#50C2BE]
-             disabled:opacity-25 text-neutral-900 font-semibold px-4 py-2 transition-colors"
+      class="w-[200px] inline-flex justify-center items-center gap-2 rounded-2xl bg-[#50C2BE] hover:bg-teal-800 disabled:hover:bg-[#50C2BE]
+           active:bg-[#50C2BE] disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed
+           text-neutral-900 font-semibold px-4 py-2 transition-colors"
       onclick={onGenerate}
-      disabled={!activeTpl || requiredMissing()}
+      disabled={!activeTpl || requiredMissing() || isGenerating}
       title={!activeTpl
         ? "Choose a template first"
         : requiredMissing()
           ? "Fill required fields"
           : "Generate"}
+      aria-busy={isGenerating}
+      aria-live="polite"
     >
-      Generate & Download
+      {#if isGenerating}
+        <span class="relative inline-block">
+          <span
+            class="block h-4 w-4 rounded-full border-2 border-neutral-900/30 border-t-neutral-900 animate-spin"
+          ></span>
+        </span>
+        <span>Generating…</span>
+      {:else}
+        <span>Generate & Download</span>
+      {/if}
     </button>
   </div>
 </div>
