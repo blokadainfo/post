@@ -20,23 +20,25 @@ import Logo from '@assets/logo.svg';
 
     <!-- Gradient overlay -->
     <div
-      class="absolute inset-0 z-20 h-full w-full bg-gradient-to-t from-black from-10% to-black/0"
+      class="absolute inset-0 z-20 h-full w-full bg-gradient-to-t from-black/90 from-10% to-black/0"
     >
     </div>
 
     <!-- Foreground content -->
-    <div class="absolute inset-0 z-30 p-8 font-[Akzidenz_Grotesk_Pro] text-white">
+    <div class="absolute inset-0 z-30 p-8 font-['Akzidenz-Grotesk_Pro'] text-white">
       <!-- Logo -->
       <img src={Logo.src} alt="Logo" class="absolute top-10 right-9 size-30 drop-shadow-lg" />
 
       <!-- Main text block -->
       <div class="absolute top-24 left-20 max-w-[75%]">
         <!-- Paragraph -->
-        <p
-          id="paragraph"
-          class="text-justify text-[46px] leading-tight break-words hyphens-auto drop-shadow-lg"
-        >
-        </p>
+        <div class="font-bold font-stretch-normal">
+          <p
+            id="paragraph"
+            class="text-justify text-[46px] leading-tight break-words hyphens-auto drop-shadow-lg"
+          >
+          </p>
+        </div>
 
         <!-- Accent lines -->
         <div class="mt-8 space-y-6">
@@ -46,12 +48,14 @@ import Logo from '@assets/logo.svg';
       </div>
 
       <!-- Footer -->
-      <div class="absolute bottom-12 left-9 text-[42px] drop-shadow-lg">
-        <span>foto: </span><span id="credit"></span>
-      </div>
+      <div class="font-stretch-condensed opacity-50">
+        <div class="absolute bottom-12 left-9 text-[40px] text-nowrap drop-shadow-lg">
+          <span>foto: </span><span id="credit"></span>
+        </div>
 
-      <div class="absolute right-9 bottom-12 text-[42px] text-nowrap drop-shadow-lg">
-        <span>blokada.info</span>
+        <div class="absolute right-9 bottom-12 text-[40px] drop-shadow-lg">
+          <span>blokada.info</span>
+        </div>
       </div>
     </div>
 

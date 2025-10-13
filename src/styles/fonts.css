@@ -1,8 +1,133 @@
+/* Font source: https://globalfonts.pro/font/akzidenz-grotesk-pro */
+
 @font-face {
-  font-family: 'AkzidenzGrotesk';
-  src: url('/fonts/akzidenz-grotesk-pro-bold-condensed.otf') format('opentype');
+  font-family: 'Akzidenz-Grotesk Pro';
+  src:
+    url('/fonts/AkzidenzGroteskPro-Light.ttf') format('truetype'),
+    url('/fonts/AkzidenzGroteskPro-Light.woff2') format('woff2'),
+    url('/fonts/AkzidenzGroteskPro-Light.woff') format('woff');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Akzidenz-Grotesk Pro';
+  src:
+    url('/fonts/AkzidenzGroteskPro-Regular.ttf') format('truetype'),
+    url('/fonts/AkzidenzGroteskPro-Regular.woff2') format('woff2'),
+    url('/fonts/AkzidenzGroteskPro-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Akzidenz-Grotesk Pro';
+  src:
+    url('/fonts/AkzidenzGroteskPro-Bold.ttf') format('truetype'),
+    url('/fonts/AkzidenzGroteskPro-Bold.woff2') format('woff2'),
+    url('/fonts/AkzidenzGroteskPro-Bold.woff') format('woff');
   font-weight: 700;
   font-style: normal;
-  font-stretch: condensed;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Akzidenz-Grotesk Pro';
+  src:
+    url('/fonts/AkzidenzGroteskPro-LightIt.ttf') format('truetype'),
+    url('/fonts/AkzidenzGroteskPro-LightIt.woff2') format('woff2'),
+    url('/fonts/AkzidenzGroteskPro-LightIt.woff') format('woff');
+  font-weight: 300;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Akzidenz-Grotesk Pro';
+  src:
+    url('/fonts/AkzidenzGroteskPro-It.ttf') format('truetype'),
+    url('/fonts/AkzidenzGroteskPro-It.woff2') format('woff2'),
+    url('/fonts/AkzidenzGroteskPro-It.woff') format('woff');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Akzidenz-Grotesk Pro';
+  src:
+    url('/fonts/AkzidenzGroteskPro-BoldIt.ttf') format('truetype'),
+    url('/fonts/AkzidenzGroteskPro-BoldIt.woff2') format('woff2'),
+    url('/fonts/AkzidenzGroteskPro-BoldIt.woff') format('woff');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Akzidenz-Grotesk Pro';
+  src:
+    url('/fonts/AkzidenzGroteskPro-LightCn.woff2') format('woff2'),
+    url('/fonts/AkzidenzGroteskPro-LightCn.woff') format('woff'),
+    url('/fonts/AkzidenzGroteskPro-LightCn.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Akzidenz-Grotesk Pro';
+  src:
+    url('/fonts/AkzidenzGroteskPro-Cn.woff2') format('woff2'),
+    url('/fonts/AkzidenzGroteskPro-Cn.woff') format('woff'),
+    url('/fonts/AkzidenzGroteskPro-Cn.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Akzidenz-Grotesk Pro';
+  src:
+    url('/fonts/AkzidenzGroteskPro-BoldCn.woff2') format('woff2'),
+    url('/fonts/AkzidenzGroteskPro-BoldCn.woff') format('woff'),
+    url('/fonts/AkzidenzGroteskPro-BoldCn.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Akzidenz-Grotesk Pro';
+  src:
+    url('/fonts/AkzidenzGroteskPro-LigCnItalic.woff2') format('woff2'),
+    url('/fonts/AkzidenzGroteskPro-LigCnItalic.woff') format('woff'),
+    url('/fonts/AkzidenzGroteskPro-LigCnItalic.ttf') format('truetype');
+  font-weight: 300;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Akzidenz-Grotesk Pro';
+  src:
+    url('/fonts/AkzidenzGroteskPro-CnIt.woff2') format('woff2'),
+    url('/fonts/AkzidenzGroteskPro-CnIt.woff') format('woff'),
+    url('/fonts/AkzidenzGroteskPro-CnIt.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Akzidenz-Grotesk Pro';
+  src:
+    url('/fonts/AkzidenzGroteskPro-BoldCnIt.woff2') format('woff2'),
+    url('/fonts/AkzidenzGroteskPro-BoldCnIt.woff') format('woff'),
+    url('/fonts/AkzidenzGroteskPro-BoldCnIt.ttf') format('truetype');
+  font-weight: 700;
+  font-style: italic;
   font-display: swap;
 }
