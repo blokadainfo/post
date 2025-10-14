@@ -6,6 +6,7 @@
     type: 'SET_DATA';
     bgDataURL?: string | null;
     paragraph?: string;
+    textSize?: number;
     credit?: string;
     darken?: number;
   };
@@ -67,7 +68,9 @@
       await new Promise((r) => requestAnimationFrame(() => r(null)));
       try {
         await waitForFonts();
-      } catch {}
+      } catch {
+        throw new Error('font load failed');
+      }
       window.parent?.postMessage({ type: 'READY' }, '*');
     })();
 
@@ -80,8 +83,16 @@
           if (data.bgDataURL) bgEl.src = data.bgDataURL;
           else bgEl.removeAttribute('src');
         }
-        if (pEl) pEl.textContent = data.paragraph ?? '';
-        if (cEl) cEl.textContent = data.credit ?? '';
+        if (pEl) {
+          pEl.textContent = data.paragraph ?? '';
+          if (typeof data.textSize === 'number') {
+            pEl.style.fontSize = `${data.textSize}px`;
+          }
+        }
+        if (cEl) {
+          cEl.textContent = data.credit ?? '';
+          cEl.textContent = cEl.textContent === '' ? '' : `foto: ${cEl.textContent}`;
+        }
         if (shadeEl && typeof data.darken === 'number') {
           shadeEl.style.opacity = String(clamp(data.darken, 0, 100) / 100);
         }

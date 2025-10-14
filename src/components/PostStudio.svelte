@@ -9,6 +9,7 @@
   let aspectKey = $state<AspectKey>(ASPECTS[1]?.key);
   let templatePath = $state<string>('');
   let paragraph = $state<string>('');
+  let textSize = $state<number>(48);
   let credit = $state<string>('');
   let generate2x = $state<boolean>(true);
   let darken = $state<number>(0);
@@ -27,6 +28,7 @@
     aspectKey: AspectKey;
     templatePath: string;
     paragraph: string;
+    textSize: number;
     credit: string;
     generate2x: boolean;
     darken: number;
@@ -34,6 +36,7 @@
     aspectKey = payload.aspectKey;
     templatePath = payload.templatePath;
     paragraph = payload.paragraph;
+    textSize = payload.textSize;
     credit = payload.credit;
     generate2x = payload.generate2x;
     darken = payload.darken;
@@ -90,23 +93,16 @@
   <section
     class="h-fit w-full rounded-2xl border border-neutral-800 bg-neutral-900/60 p-3 lg:w-auto"
   >
-    <div class="mb-2 flex cursor-default items-center justify-between">
-      <div class="hidden text-sm text-neutral-300 sm:block">
-        Preview — <span class="capitalize">{aspectKey}</span>
-      </div>
-      <div class="text-sm">
-        <span class="text-neutral-300">Template:</span>
-        <code class="font-mono text-neutral-400"
-          >{templatePath.split('/').slice(-2).join('/') || 'template'}</code
-        >
-      </div>
-    </div>
+    <span class="mb-1 block cursor-default text-xs font-semibold tracking-wide uppercase opacity-70"
+      >Template</span
+    >
 
     <PreviewFrame
       bind:this={previewRef}
       {templatePath}
       {bgDataURL}
       {paragraph}
+      {textSize}
       {credit}
       {aspectKey}
       {darken}

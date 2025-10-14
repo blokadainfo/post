@@ -1,0 +1,31 @@
+---
+import Layout from '@layouts/Template.astro';
+import Background from '@assets/template-img/story/breaking-news-protests-24-25.jpg';
+---
+
+<Layout viewportWidth={1080}>
+  <!-- 1080×1350 canvas -->
+  <div id="post" class="relative h-[1920px] w-[1080px] overflow-hidden bg-black">
+    <!-- Background -->
+    <img
+      src={Background.src}
+      alt=""
+      aria-hidden="true"
+      class="absolute inset-0 z-0 h-full w-full object-cover"
+    />
+
+    <!-- Foreground content -->
+    <div class="absolute inset-0 z-10 flex items-center justify-center">
+      <!-- Main text block -->
+      <div class="max-w-[75%] font-['Akzidenz-Grotesk_Pro'] text-[#F5F5F7]">
+        <!-- Paragraph -->
+        <div class="font-bold font-stretch-normal">
+          <p id="paragraph" class="text-center text-7xl text-balance"></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hairline fix -->
+    <div class="pointer-events-none absolute inset-0 z-40 shadow-[inset_0_0_0_1px_#0E0F13]"></div>
+  </div>
+</Layout>

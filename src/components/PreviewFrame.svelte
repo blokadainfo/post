@@ -2,10 +2,11 @@
   import { NATIVE_BY_KEY, type AspectKey } from '@lib/aspects';
 
   // ---- props ----
-  const { templatePath, bgDataURL, paragraph, credit, aspectKey, darken } = $props<{
+  const { templatePath, bgDataURL, paragraph, textSize, credit, aspectKey, darken } = $props<{
     templatePath: string;
     bgDataURL: string | null;
     paragraph: string;
+    textSize: number;
     credit: string;
     aspectKey: AspectKey;
     darken: number;
@@ -28,10 +29,11 @@
     type: 'SET_DATA';
     bgDataURL: string | null;
     paragraph: string;
+    textSize: number;
     credit: string;
     darken: number;
   };
-  let latest: Payload = { type: 'SET_DATA', bgDataURL, paragraph, credit, darken };
+  let latest: Payload = { type: 'SET_DATA', bgDataURL, paragraph, textSize, credit, darken };
 
   let pushTimer: number | undefined;
   function pushLatest() {
@@ -43,7 +45,7 @@
   }
 
   $effect(() => {
-    latest = { type: 'SET_DATA', bgDataURL, paragraph, credit, darken };
+    latest = { type: 'SET_DATA', bgDataURL, paragraph, textSize, credit, darken };
     pushLatest();
   });
 
@@ -157,7 +159,7 @@
     <div style={`width:${scaledW}px;height:${scaledH}px;`} aria-hidden="true"></div>
   {:else}
     <div
-      class="grid cursor-default place-items-center rounded-lg border border-neutral-800 bg-neutral-900/50 text-neutral-400"
+      class="grid cursor-default place-items-center border border-neutral-800 bg-neutral-900/50 text-neutral-400"
       style={`width:${scaledW}px;height:${scaledH}px;`}
     >
       Choose a template to preview

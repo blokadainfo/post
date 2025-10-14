@@ -9,6 +9,7 @@
       aspectKey: AspectKey;
       templatePath: string;
       paragraph: string;
+      textSize: number;
       credit: string;
       generate2x: boolean;
       darken: number;
@@ -21,6 +22,8 @@
   let aspectKey = $state<AspectKey>(ASPECTS[0].key);
   let templatePath = $state<string>('');
   let paragraph = $state<string>('');
+  let textSize = $state<number>(48);
+  let textSizeDirty = $state<boolean>(false);
   let credit = $state<string>('');
   let generate2x = $state<boolean>(true);
   let darken = $state<number>(40);
@@ -37,7 +40,7 @@
     tplOptions.find((t) => t.path === templatePath)
   );
 
-  type FieldKey = 'bg' | 'paragraph' | 'credit' | 'shade';
+  type FieldKey = 'bg' | 'paragraph' | 'textSize' | 'credit' | 'shade';
   function has(key: FieldKey) {
     const f = activeTpl?.fields ?? [];
     return f.some((x: any) => (typeof x === 'string' ? x === key : x.key === key));
@@ -51,6 +54,7 @@
           min?: number;
           max?: number;
           step?: number;
+          default?: number;
           rows?: number;
           label?: string;
         }
@@ -64,12 +68,29 @@
     }
   });
 
+  // set initial textSize
+  $effect(() => {
+    const cfg = fieldCfg('textSize');
+    if (!cfg) return;
+
+    const min = cfg.min ?? 12;
+    const max = cfg.max ?? 128;
+    const def = cfg.default ?? 48;
+
+    if (!textSizeDirty) {
+      textSize = Math.min(max, Math.max(min, def));
+    } else {
+      textSize = Math.min(max, Math.max(min, textSize));
+    }
+  });
+
   // bubble changes up
   $effect(() => {
     onChange?.({
       aspectKey,
       templatePath,
       paragraph,
+      textSize,
       credit,
       generate2x,
       darken,
@@ -477,6 +498,41 @@
             class="w-full rounded-xl bg-neutral-800 px-3 py-2 accent-[#50C2BE]"
             bind:value={paragraph}
           ></textarea>
+        </label>
+      </div>
+    {/if}
+
+    <!-- Text size (PX) -->
+    {#if has('textSize')}
+      <div class="mt-3">
+        <label>
+          <div class="mb-1 flex items-center justify-between">
+            <span class="text-xs font-semibold tracking-wide uppercase opacity-70">
+              {fieldCfg('textSize')?.label ?? 'Text size (px)'}
+            </span>
+            <span class="text-xs tabular-nums">
+              {textSize}px
+            </span>
+          </div>
+
+          <input
+            type="range"
+            min={fieldCfg('textSize')?.min ?? 12}
+            max={fieldCfg('textSize')?.max ?? 128}
+            step={fieldCfg('textSize')?.step ?? 1}
+            bind:value={textSize}
+            oninput={(e) => {
+              const cfg = fieldCfg('textSize');
+              const min = cfg?.min ?? 12;
+              const max = cfg?.max ?? 128;
+              textSize = Math.min(
+                max,
+                Math.max(min, Number((e.currentTarget as HTMLInputElement).value))
+              );
+              textSizeDirty = textSize !== (cfg?.default ?? 48);
+            }}
+            class="w-full cursor-pointer accent-[#DB2340]"
+          />
         </label>
       </div>
     {/if}
