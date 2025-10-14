@@ -93,9 +93,11 @@
   <section
     class="h-fit w-full rounded-2xl border border-neutral-800 bg-neutral-900/60 p-3 lg:w-auto"
   >
-    <span class="mb-1 block cursor-default text-xs font-semibold tracking-wide uppercase opacity-70"
-      >Template</span
+    <span
+      class="mb-1 block cursor-default text-xs font-semibold tracking-wide uppercase opacity-70"
     >
+      Template
+    </span>
 
     <PreviewFrame
       bind:this={previewRef}
