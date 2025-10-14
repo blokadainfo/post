@@ -1,0 +1,63 @@
+---
+import Layout from '@layouts/Template.astro';
+import Logo from '@assets/logo.svg';
+---
+
+<Layout viewportWidth={1080}>
+  <!-- 1080×1920 canvas -->
+  <div id="post" class="relative h-[1920px] w-[1080px] overflow-hidden bg-black">
+    <!-- Foreground background image (absolute, not CSS background) -->
+    <div class="relative flex h-3/4 w-full items-center justify-center overflow-hidden">
+      <!-- Image container (absolute so gradient clips to it) -->
+      <div class="relative z-0 w-full">
+        <!-- Image -->
+        <img id="bg" alt="" aria-hidden="true" class="w-full object-contain" />
+
+        <!-- Gradient overlay (both top and bottom fades) -->
+        <div class="pointer-events-none absolute inset-0">
+          <div
+            class="absolute inset-0 bg-gradient-to-b from-black from-5% via-transparent to-transparent"
+          >
+          </div>
+          <div
+            class="absolute inset-0 bg-gradient-to-t from-black from-5% via-transparent to-transparent"
+          >
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Darken overlay (controlled by client) -->
+    <div id="shade" class="pointer-events-none absolute inset-0 z-10 bg-black" style="opacity: 0;">
+    </div>
+
+    <!-- Foreground content -->
+    <div class="absolute inset-0 z-30 p-8 font-['Akzidenz-Grotesk_Pro'] text-white">
+      <!-- Main text block -->
+      <div class="absolute bottom-72 left-20 max-w-[75%]">
+        <!-- Accent lines -->
+        <div class="mb-8 space-y-6">
+          <!-- Logo -->
+          <img src={Logo.src} alt="Logo" class="size-30 drop-shadow-lg" />
+          <div class="h-2 w-5/12 bg-[#50C2BE]"></div>
+          <div class="h-2 w-full bg-[#DB2340]"></div>
+        </div>
+
+        <!-- Paragraph -->
+        <div class="font-bold font-stretch-normal">
+          <p id="paragraph" class="text-[46px] leading-tight text-pretty drop-shadow-lg"></p>
+        </div>
+        <div class="mt-5">
+          <span
+            id="credit"
+            class="text-[40px] text-nowrap font-stretch-condensed opacity-50 drop-shadow-lg"
+          >
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hairline fix -->
+    <div class="pointer-events-none absolute inset-0 z-40 shadow-[inset_0_0_0_1px_#000]"></div>
+  </div>
+</Layout>
