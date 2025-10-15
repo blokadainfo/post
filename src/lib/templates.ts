@@ -114,7 +114,12 @@ const RAW_TEMPLATES: TemplateInit[] = [
   },
   {
     name: 'Regular News',
-    path: '/templates/story/regular-news',
+    path: '/templates/story/regular-news-text',
+    fields: [f.textSize({ default: 100 }), f.paragraph()],
+  },
+  {
+    name: 'Regular News /w Image',
+    path: '/templates/story/regular-news-image',
     fields: [f.bg(), f.shade(), f.textSize({ default: 100 }), f.paragraph(), f.credit()],
   },
   {

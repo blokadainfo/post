@@ -6,14 +6,11 @@ import Logo from '@assets/logo.svg';
 <Layout viewportWidth={1080}>
   <!-- 1080×1920 canvas -->
   <div id="post" class="relative h-[1920px] w-[1080px] overflow-hidden bg-black">
-    <!-- Foreground background image (absolute, not CSS background) -->
+    <!-- Background image -->
     <div class="relative flex h-3/4 w-full items-center justify-center overflow-hidden">
-      <!-- Image container (absolute so gradient clips to it) -->
       <div class="relative z-0 w-full">
-        <!-- Image -->
         <img id="bg" alt="" aria-hidden="true" class="w-full object-contain" />
 
-        <!-- Gradient overlay (both top and bottom fades) -->
         <div class="pointer-events-none absolute inset-0">
           <div
             class="absolute inset-0 bg-gradient-to-b from-black from-5% via-transparent to-transparent"
@@ -27,7 +24,7 @@ import Logo from '@assets/logo.svg';
       </div>
     </div>
 
-    <!-- Darken overlay (controlled by client) -->
+    <!-- Darken overlay -->
     <div id="shade" class="pointer-events-none absolute inset-0 z-10 bg-black" style="opacity: 0;">
     </div>
 

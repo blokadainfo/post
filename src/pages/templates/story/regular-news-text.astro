@@ -1,0 +1,33 @@
+---
+import Layout from '@layouts/Template.astro';
+import Logo from '@assets/logo.svg';
+---
+
+<Layout viewportWidth={1080}>
+  <!-- 1080×1920 canvas -->
+  <div id="post" class="relative h-[1920px] w-[1080px] overflow-hidden bg-black">
+    <!-- Foreground content -->
+    <div
+      class="inset-0 z-30 flex h-[75%] items-center p-8 font-['Akzidenz-Grotesk_Pro'] text-white"
+    >
+      <!-- Main text block -->
+      <div class="ml-20 max-w-[75%]">
+        <!-- Accent lines -->
+        <div class="mb-8 space-y-6">
+          <!-- Logo -->
+          <img src={Logo.src} alt="Logo" class="size-30 drop-shadow-lg" />
+          <div class="h-2 w-5/12 bg-[#50C2BE]"></div>
+          <div class="h-2 w-full bg-[#DB2340]"></div>
+        </div>
+
+        <!-- Paragraph -->
+        <div class="font-bold font-stretch-normal">
+          <p id="paragraph" class="text-[46px] leading-tight text-pretty drop-shadow-lg"></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hairline fix -->
+    <div class="pointer-events-none absolute inset-0 z-40 shadow-[inset_0_0_0_1px_#000]"></div>
+  </div>
+</Layout>
