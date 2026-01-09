@@ -41,7 +41,7 @@ export type TemplateDef = {
 const DEFAULTS = {
   labels: {
     bg: 'Background image',
-    paragraph: 'Paragraph*',
+    paragraph: 'Paragraph',
     textSize: 'Text size',
     credit: 'Picture source / credit',
     shade: 'Darken picture',
@@ -66,7 +66,7 @@ const f = {
       type: 'textarea',
       label: DEFAULTS.labels.paragraph,
       rows: 6,
-      required: true,
+      required: false, // todo: needs to be true, this is just a temporary fix so that ppl can just export imgs with overlay
       ...opt,
     };
   },
