@@ -26,7 +26,7 @@
   let textSizeDirty = $state<boolean>(false);
   let credit = $state<string>('');
   let generate2x = $state<boolean>(true);
-  let darken = $state<number>(40);
+  let darken = $state<number>(20); // hardcoded for now
 
   // dropzone state
   let dzHover = $state(false);

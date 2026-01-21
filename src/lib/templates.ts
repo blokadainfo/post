@@ -47,7 +47,7 @@ const DEFAULTS = {
     shade: 'Darken picture',
   },
   textSize: { min: 46, max: 128, step: 2 },
-  shade: { min: 0, max: 100, step: 1, default: 40 },
+  shade: { min: 0, max: 100, step: 1, default: 20 },
 };
 
 const f = {
