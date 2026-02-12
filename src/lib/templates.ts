@@ -103,32 +103,42 @@ type TemplateInit = Omit<TemplateDef, 'aspect'>;
 
 const RAW_TEMPLATES: TemplateInit[] = [
   {
-    name: 'Text Upper /w Grayscale Bg Photo',
+    name: 'Photo + Text (Top)',
     path: '/templates/portrait/text-upper',
     fields: [f.bg(), f.shade(), f.textSize({ default: 46, max: 100 }), f.paragraph(), f.credit()],
   },
   {
-    name: 'Text Lower /w Grayscale Bg Photo',
+    name: 'Photo + Text (Bottom)',
     path: '/templates/portrait/text-lower',
     fields: [f.bg(), f.shade(), f.textSize({ default: 46 }), f.paragraph(), f.credit()],
   },
   {
-    name: 'Regular News',
+    name: 'Photo + Text (Top)',
+    path: '/templates/square/text-upper',
+    fields: [f.bg(), f.shade(), f.textSize({ default: 46, max: 100 }), f.paragraph(), f.credit()],
+  },
+  {
+    name: 'Photo + Text (Bottom)',
+    path: '/templates/square/text-lower',
+    fields: [f.bg(), f.shade(), f.textSize({ default: 46 }), f.paragraph(), f.credit()],
+  },
+  {
+    name: 'Text',
     path: '/templates/story/regular-news-text',
     fields: [f.textSize({ default: 100 }), f.paragraph()],
   },
   {
-    name: 'Regular News /w Image',
+    name: 'Photo + Text',
     path: '/templates/story/regular-news-image',
     fields: [f.bg(), f.shade(), f.textSize({ default: 100 }), f.paragraph(), f.credit()],
   },
   {
-    name: 'Breaking News',
+    name: 'Text (Breaking News Variant)',
     path: '/templates/story/breaking-news',
     fields: [f.textSize({ default: 128 }), f.paragraph()],
   },
   {
-    name: 'Breaking News – Protests 2024/25',
+    name: 'Text (Breaking News Red Hand Variant)',
     path: '/templates/story/breaking-news-protests-24-25',
     fields: [f.textSize({ default: 128 }), f.paragraph()],
   },
