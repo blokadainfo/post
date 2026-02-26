@@ -1,0 +1,397 @@
+---
+import Layout from '@layouts/Layout.astro';
+import { readdirSync } from 'node:fs';
+import { join, relative } from 'node:path';
+
+type AssetItem = {
+  name: string;
+  href: string;
+  filename: string;
+  category: string;
+};
+
+type AssetSection = {
+  key: 'logos' | 'backgrounds' | 'overlays';
+  title: string;
+  items: AssetItem[];
+};
+
+const rootDefs: Pick<AssetSection, 'key' | 'title'>[] = [
+  { key: 'logos', title: 'Logos' },
+  { key: 'backgrounds', title: 'Backgrounds' },
+  { key: 'overlays', title: 'Overlays' },
+];
+
+function formatName(filename: string): string {
+  return filename
+    .replace(/\.[^.]+$/, '')
+    .replace(/[-_]+/g, ' ')
+    .replace(/\b\w/g, (m) => m.toUpperCase());
+}
+
+const publicResursiDir = join(process.cwd(), 'public', 'resursi');
+
+function walkFiles(dir: string): string[] {
+  let files: string[] = [];
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const fullPath = join(dir, entry.name);
+    if (entry.isDirectory()) {
+      files = files.concat(walkFiles(fullPath));
+      continue;
+    }
+    if (entry.isFile()) files.push(fullPath);
+  }
+  return files;
+}
+
+function buildItemsForRoot(rootKey: AssetSection['key']): AssetItem[] {
+  const rootDir = join(publicResursiDir, rootKey);
+  let files: string[] = [];
+  try {
+    files = walkFiles(rootDir);
+  } catch {
+    files = [];
+  }
+
+  return files
+    .map((filePath) => {
+      const normalized = filePath.replace(/\\/g, '/');
+      const rootDirNormalized = rootDir.replace(/\\/g, '/');
+      const afterRoot = relative(rootDirNormalized, normalized).replace(/\\/g, '/');
+      const segments = afterRoot.split('/').filter(Boolean);
+      const filename = segments.at(-1) ?? 'asset';
+      const categorySegments = segments.slice(0, -1);
+      const category = categorySegments.length ? categorySegments.join(' / ') : 'General';
+      const href = `/resursi/${rootKey}/${afterRoot}`.replace(/\\/g, '/');
+
+      return {
+        name: formatName(filename),
+        href,
+        filename,
+        category,
+      } satisfies AssetItem;
+    })
+    .sort((a, b) => a.category.localeCompare(b.category) || a.filename.localeCompare(b.filename));
+}
+
+const sections: AssetSection[] = rootDefs
+  .map((root) => ({
+    ...root,
+    items: buildItemsForRoot(root.key),
+  }))
+  .filter((section) => section.items.length > 0);
+---
+
+<Layout>
+  <main class="mx-auto min-h-screen w-full max-w-[960px] px-6 py-10 text-neutral-100">
+    <header class="mb-8">
+      <h1 class="text-3xl font-semibold tracking-tight">Asset Downloads</h1>
+      <p class="mt-2 text-sm text-neutral-400">Download logos, backgrounds, and overlays.</p>
+    </header>
+
+    <section class="mb-8 rounded-2xl border border-neutral-800 bg-neutral-900/60 p-5">
+      <div class="flex flex-wrap items-end gap-4">
+        <label class="block min-w-[180px]">
+          <span class="mb-2 block text-xs font-semibold tracking-wide text-neutral-400 uppercase">
+            Type
+          </span>
+          <select
+            id="asset-type-filter"
+            class="w-full rounded-xl border border-neutral-800 bg-black/40 px-3 py-2 text-sm text-neutral-100"
+          >
+            <option value="all">All types</option>
+            {sections.map((section) => <option value={section.key}>{section.title}</option>)}
+          </select>
+        </label>
+
+        <button
+          id="asset-filter-reset"
+          type="button"
+          class="rounded-xl border border-neutral-700 px-3 py-2 text-sm text-neutral-200 hover:bg-neutral-800"
+        >
+          Reset
+        </button>
+      </div>
+    </section>
+
+    <div class="space-y-8">
+      {
+        sections.map((section) => {
+          const categories = [...new Set(section.items.map((item) => item.category))];
+
+          return (
+            <section
+              class="rounded-2xl border border-neutral-800 bg-neutral-900/60 p-5"
+              data-asset-section
+              data-section-key={section.key}
+            >
+              <h2 class="mb-4 text-lg font-semibold text-neutral-100">{section.title}</h2>
+
+              <div class="space-y-5">
+                {categories.map((category) => (
+                  <div data-asset-category-group data-category={category}>
+                    <h3 class="mb-2 text-xs font-semibold tracking-wide text-neutral-400 uppercase">
+                      {category}
+                    </h3>
+                    <ul class="space-y-3">
+                      {section.items
+                        .filter((item) => item.category === category)
+                        .map((item) => (
+                          <li class="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-neutral-800 bg-black/30 px-4 py-3">
+                            <div class="min-w-0">
+                              <p class="truncate text-sm font-medium">{item.name}</p>
+                              <p class="truncate text-xs text-neutral-500">{item.filename}</p>
+                            </div>
+                            <div class="flex items-center gap-2">
+                              <button
+                                type="button"
+                                data-preview-open
+                                data-preview-href={item.href}
+                                data-preview-name={item.name}
+                                data-preview-filename={item.filename}
+                                class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-neutral-700 text-neutral-200 hover:bg-neutral-800"
+                                aria-label={`Preview ${item.name}`}
+                                title="Preview"
+                              >
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  stroke-width="1.8"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  class="h-4 w-4"
+                                  aria-hidden="true"
+                                >
+                                  <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6" />
+                                  <circle cx="12" cy="12" r="3" />
+                                </svg>
+                              </button>
+                              <a
+                                href={item.href}
+                                download={item.filename}
+                                class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-[#50C2BE] text-neutral-900 hover:bg-[#63d2ce]"
+                                aria-label={`Download ${item.name}`}
+                                title="Download"
+                              >
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  stroke-width="1.8"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  class="h-4 w-4"
+                                  aria-hidden="true"
+                                >
+                                  <path d="M12 3v11m-5-4 5 5 5-5M4 20h16" />
+                                </svg>
+                              </a>
+                            </div>
+                          </li>
+                        ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </section>
+          );
+        })
+      }
+    </div>
+  </main>
+
+  <dialog
+    id="asset-preview-dialog"
+    class="fixed top-1/2 left-1/2 m-0 box-border max-h-[80svh] w-fit max-w-[62vw] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-950 p-0 text-neutral-100 backdrop:bg-black/80"
+  >
+    <div class="flex items-center justify-between gap-4 border-b border-neutral-800 px-5 py-4">
+      <div class="min-w-0">
+        <p id="asset-preview-title" class="truncate text-sm font-semibold">Preview</p>
+        <p id="asset-preview-filename" class="truncate text-xs text-neutral-500"></p>
+      </div>
+      <div class="flex items-center gap-2">
+        <a
+          id="asset-preview-download"
+          href="#"
+          download
+          class="rounded-lg bg-[#50C2BE] px-3 py-1.5 text-xs font-semibold text-neutral-900 hover:bg-[#63d2ce]"
+        >
+          Download
+        </a>
+        <button
+          id="asset-preview-close"
+          type="button"
+          class="rounded-lg border border-neutral-700 px-3 py-1.5 text-xs text-neutral-200 hover:bg-neutral-800"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+
+    <div id="asset-preview-body" class="p-4 sm:p-5">
+      <div id="asset-preview-body-inner" class="grid place-items-center">
+        <div
+          id="asset-preview-surface"
+          class="mx-auto w-fit rounded-xl border border-neutral-800"
+          style="background:#e5e7eb;--checker-a:#e5e7eb;--checker-b:#cfd4dc;background-image:repeating-conic-gradient(var(--checker-a) 0 25%,var(--checker-b) 0 50%,var(--checker-a) 0 75%,var(--checker-b) 0 100%);background-size:24px 24px;"
+        >
+          <img
+            id="asset-preview-image"
+            alt=""
+            class="block h-auto max-h-[calc(80svh-9.5rem)] w-auto max-w-[calc(62vw-4.5rem)] object-contain opacity-0 transition-opacity duration-150"
+            loading="eager"
+          />
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <script>
+    const typeFilter = document.querySelector('#asset-type-filter');
+    const resetButton = document.querySelector('#asset-filter-reset');
+    const sections = Array.from(document.querySelectorAll('[data-asset-section]'));
+    const previewButtons = Array.from(document.querySelectorAll('[data-preview-open]'));
+    const previewDialog = document.querySelector('#asset-preview-dialog');
+    const previewTitle = document.querySelector('#asset-preview-title');
+    const previewFilename = document.querySelector('#asset-preview-filename');
+    const previewImage = document.querySelector('#asset-preview-image');
+    const previewSurface = document.querySelector('#asset-preview-surface');
+    const previewBody = document.querySelector('#asset-preview-body');
+    const previewBodyInner = document.querySelector('#asset-preview-body-inner');
+    const previewDownload = document.querySelector('#asset-preview-download');
+    const previewClose = document.querySelector('#asset-preview-close');
+
+    function applyAssetFilters() {
+      if (!(typeFilter instanceof HTMLSelectElement)) {
+        return;
+      }
+
+      const typeValue = typeFilter.value;
+
+      sections.forEach((section) => {
+        const sectionKey = section.getAttribute('data-section-key') ?? '';
+        const categoryGroups = Array.from(section.querySelectorAll('[data-asset-category-group]'));
+        const matchesType = typeValue === 'all' || sectionKey === typeValue;
+
+        let visibleGroupCount = 0;
+        categoryGroups.forEach((group) => {
+          const show = matchesType;
+          group.toggleAttribute('hidden', !show);
+          if (show) visibleGroupCount += 1;
+        });
+
+        section.toggleAttribute('hidden', !(matchesType && visibleGroupCount > 0));
+      });
+    }
+
+    typeFilter?.addEventListener('change', applyAssetFilters);
+    resetButton?.addEventListener('click', () => {
+      if (typeFilter instanceof HTMLSelectElement) typeFilter.value = 'all';
+      applyAssetFilters();
+    });
+
+    function openPreview(button: Element) {
+      if (
+        !(button instanceof HTMLElement) ||
+        !(previewDialog instanceof HTMLDialogElement) ||
+        !(previewTitle instanceof HTMLElement) ||
+        !(previewFilename instanceof HTMLElement) ||
+        !(previewImage instanceof HTMLImageElement)
+      ) {
+        return;
+      }
+
+      const href = button.dataset.previewHref ?? '';
+      const name = button.dataset.previewName ?? 'Preview';
+      const filename = button.dataset.previewFilename ?? '';
+      const lowerFilename = filename.toLowerCase();
+      const showCheckerboard = /\.(png|svg|webp|avif)$/i.test(lowerFilename);
+
+      previewTitle.textContent = name;
+      previewFilename.textContent = filename;
+      previewImage.style.opacity = '0';
+      previewImage.removeAttribute('src');
+      previewImage.alt = name;
+      if (previewSurface instanceof HTMLElement) {
+        previewSurface.style.backgroundColor = showCheckerboard ? '#e5e7eb' : '#0a0a0a';
+        previewSurface.style.backgroundImage = showCheckerboard
+          ? 'repeating-conic-gradient(#e5e7eb 0 25%,#cfd4dc 0 50%,#e5e7eb 0 75%,#cfd4dc 0 100%)'
+          : 'none';
+        previewSurface.style.backgroundSize = showCheckerboard ? '24px 24px' : '';
+        previewSurface.style.backgroundPosition = '';
+      }
+      if (previewDownload instanceof HTMLAnchorElement) {
+        previewDownload.href = href;
+        previewDownload.setAttribute('download', filename || '');
+      }
+
+      const onLoad = () => {
+        previewImage.style.opacity = '1';
+        previewImage.removeEventListener('load', onLoad);
+      };
+      previewImage.addEventListener('load', onLoad);
+      previewImage.src = href;
+
+      if (!previewDialog.open) previewDialog.showModal();
+    }
+
+    previewButtons.forEach((button) => {
+      button.addEventListener('click', () => openPreview(button));
+    });
+
+    previewClose?.addEventListener('click', () => {
+      if (previewDialog instanceof HTMLDialogElement) previewDialog.close();
+    });
+
+    previewDialog?.addEventListener('click', (event) => {
+      if (!(previewDialog instanceof HTMLDialogElement)) return;
+      if (!(event instanceof MouseEvent)) return;
+      if (
+        event.target === previewDialog ||
+        event.target === previewBody ||
+        event.target === previewBodyInner
+      ) {
+        previewDialog.close();
+      }
+    });
+  </script>
+
+  <style>
+    @media (max-width: 639px) {
+      #asset-preview-dialog[open] {
+        display: flex;
+        flex-direction: column;
+      }
+
+      #asset-preview-dialog {
+        width: 100vw;
+        height: 100svh;
+        max-width: none;
+        max-height: none;
+        border-radius: 0;
+      }
+
+      #asset-preview-body {
+        flex: 1 1 auto;
+        min-height: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      #asset-preview-body-inner {
+        width: 100%;
+        display: grid;
+        place-items: center;
+      }
+
+      #asset-preview-image {
+        max-width: calc(100vw - 2rem);
+        max-height: calc(100svh - 9.5rem);
+      }
+    }
+  </style>
+</Layout>
