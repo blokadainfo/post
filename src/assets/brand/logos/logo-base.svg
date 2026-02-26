@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="425.2" height="425.2">
+  <svg version="1.1" id="SvgjsSvg1024" x="0" y="0" viewBox="0 0 425.2 425.2" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
+    <style type="text/css" id="SvgjsStyle1021">
+      .st3{fill:#db2340}.st4{fill:#50c2be}@media (prefers-color-scheme:light){:root{filter:none}}@media (prefers-color-scheme:dark){:root{filter:none}}
+    </style>
+    <g id="SvgjsG1020">
+      <circle class="st4" cx="196.49" cy="89.83" r="31.9" id="SvgjsCircle1019"/>
+      <path class="st3" d="M155.57 367.26H56.79v-107h40.02c32.45 0 58.75 26.3 58.75 58.75v48.25z" id="SvgjsPath1018"/>
+      <path class="st3" d="M95.89 245.09h-39.1v-78.2h39.1c21.59 0 39.1 17.5 39.1 39.1s-17.5 39.1-39.1 39.1" id="SvgjsPath1017"/>
+      <path class="st4" id="SvgjsPolygon1016" d="m368.4 62.39-101.85 50.23v192.24l101.85 50.27z"/>
+      <path class="st4" id="SvgjsPolygon1015" d="m161.17 164.59.08 88.31 84.03 41.47V123.11z"/>
+    </g>
+  </svg>
+</svg>
