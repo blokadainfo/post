@@ -36,14 +36,15 @@ import TitleLineShort from '@assets/templates/accents/title/short.svg';
       <img src={Logo.src} alt="Logo" class="absolute top-10 left-9 size-30 drop-shadow-lg" />
 
       <!-- Main text block -->
-      <div class="absolute top-28 left-52 w-[75%] max-w-[75%]">
+      <div
+        id="main-text-block"
+        data-align-first-line-to-logo="true"
+        class="absolute left-52 w-[75%] max-w-[75%] text-[46px] leading-tight"
+        style="top: calc(6.25rem - (1.25em / 2));"
+      >
         <!-- Paragraph -->
         <div class="font-bold font-stretch-normal">
-          <p
-            id="paragraph"
-            class="text-[46px] leading-tight text-pretty whitespace-pre-line drop-shadow-lg"
-          >
-          </p>
+          <p id="paragraph" class="text-pretty whitespace-pre-line drop-shadow-lg"></p>
         </div>
 
         <!-- Accent lines -->

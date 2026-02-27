@@ -86,7 +86,13 @@
         if (pEl) {
           pEl.textContent = data.paragraph ?? '';
           if (typeof data.textSize === 'number') {
-            pEl.style.fontSize = `${data.textSize}px`;
+            const textBlockEl = document.getElementById('main-text-block') as HTMLElement | null;
+            if (textBlockEl?.dataset.alignFirstLineToLogo === 'true') {
+              textBlockEl.style.fontSize = `${data.textSize}px`;
+              pEl.style.fontSize = 'inherit';
+            } else {
+              pEl.style.fontSize = `${data.textSize}px`;
+            }
           }
         }
         if (cEl) {
