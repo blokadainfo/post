@@ -142,6 +142,16 @@ const RAW_TEMPLATES: TemplateInit[] = [
     path: '/templates/story/breaking-news-protests-24-25',
     fields: [f.textSize({ default: 128 }), f.paragraph()],
   },
+  {
+    name: 'Text (Breaking News Red)',
+    path: '/templates/story/breaking-news-red',
+    fields: [f.textSize({ default: 128 }), f.paragraph()],
+  },
+  {
+    name: 'Text (News White)',
+    path: '/templates/story/news-white',
+    fields: [f.textSize({ default: 128 }), f.paragraph()],
+  },
 ];
 
 function deriveAspect(path: string): AspectKey {
