@@ -1,0 +1,46 @@
+---
+import Layout from '@layouts/Template.astro';
+import Logo from '@assets/brand/logos/logo.svg';
+import TitleLineLong from '@assets/templates/accents/title/long.svg';
+import TitleLineShort from '@assets/templates/accents/title/short.svg';
+---
+
+<Layout viewportWidth={1080}>
+  <!-- 1080×1920 canvas -->
+  <div id="post" class="relative h-[1920px] w-[1080px] overflow-hidden">
+    <!-- Foreground content -->
+    <div class="absolute inset-0 z-30 p-8 font-['Akzidenz-Grotesk_Pro'] text-white">
+      <!-- Main text block -->
+      <div class="absolute right-20 bottom-72 left-20">
+        <!-- Paragraph -->
+        <div
+          class="relative z-10 -mb-24 ml-[11.5rem] max-w-[calc(100%-11.5rem)] font-bold font-stretch-normal"
+        >
+          <p
+            id="paragraph"
+            class="max-w-full text-[46px] leading-tight text-pretty whitespace-pre-line drop-shadow-lg"
+          >
+          </p>
+        </div>
+
+        <!-- Accent lines + logo (flow below text) -->
+        <div class="relative z-0 flex max-w-full items-end gap-10">
+          <img src={Logo.src} alt="Logo" class="mb-7 size-36 drop-shadow-lg" />
+          <div class="min-w-0 flex-1 space-y-1">
+            <img src={TitleLineLong.src} alt="" aria-hidden="true" class="block h-auto w-full" />
+            <img src={TitleLineShort.src} alt="" aria-hidden="true" class="block h-auto w-5/12" />
+          </div>
+        </div>
+
+        <!-- Attribution -->
+        <div class="mt-5 flex w-full justify-end">
+          <span
+            id="credit"
+            class="mr-4 max-w-full text-[40px] text-nowrap font-stretch-condensed opacity-50 drop-shadow-lg"
+          >
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>

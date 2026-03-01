@@ -133,13 +133,13 @@ const RAW_TEMPLATES: TemplateInit[] = [
     fields: [f.bg(), f.shade(), f.textSize({ default: 100 }), f.paragraph(), f.credit()],
   },
   {
-    name: 'Text (Breaking News Variant)',
-    path: '/templates/story/breaking-news',
+    name: 'Text (News White)',
+    path: '/templates/story/news-white',
     fields: [f.textSize({ default: 128 }), f.paragraph()],
   },
   {
-    name: 'Text (Breaking News Red Hand Variant)',
-    path: '/templates/story/breaking-news-protests-24-25',
+    name: 'Text (Breaking News)',
+    path: '/templates/story/breaking-news',
     fields: [f.textSize({ default: 128 }), f.paragraph()],
   },
   {
@@ -148,9 +148,14 @@ const RAW_TEMPLATES: TemplateInit[] = [
     fields: [f.textSize({ default: 128 }), f.paragraph()],
   },
   {
-    name: 'Text (News White)',
-    path: '/templates/story/news-white',
+    name: 'Text (Breaking News Red Hand Variant)',
+    path: '/templates/story/breaking-news-protests-24-25',
     fields: [f.textSize({ default: 128 }), f.paragraph()],
+  },
+  {
+    name: 'Caption',
+    path: '/templates/story/caption',
+    fields: [f.textSize({ default: 100 }), f.paragraph(), f.credit()],
   },
 ];
 
