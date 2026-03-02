@@ -96,8 +96,9 @@
           }
         }
         if (cEl) {
+          const creditPrefix = cEl.dataset.creditPrefix ?? 'foto';
           cEl.textContent = data.credit ?? '';
-          cEl.textContent = cEl.textContent === '' ? '' : `foto: ${cEl.textContent}`;
+          cEl.textContent = cEl.textContent === '' ? '' : `${creditPrefix}: ${cEl.textContent}`;
         }
         if (shadeEl && typeof data.darken === 'number') {
           shadeEl.style.opacity = String(clamp(data.darken, 0, 100) / 100);
