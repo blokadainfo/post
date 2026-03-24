@@ -109,15 +109,6 @@
     </StudioSidebar>
   </div>
 
-  {#if studio.mobilePanel}
-    <button
-      type="button"
-      class="fixed inset-0 z-40 border-0 bg-black/55 min-[1101px]:hidden"
-      aria-label="Close drawer"
-      onclick={() => closeMobilePanel(studio)}
-    ></button>
-  {/if}
-
   <StudioDrawer open={studio.isMobileDrawerOpen} onRequestClose={() => closeMobilePanel(studio)}>
     {#if studio.mobilePanel === 'input'}
       <PresetSidebarContent {...presetSidebarProps} />

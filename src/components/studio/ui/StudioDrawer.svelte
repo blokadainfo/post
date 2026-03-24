@@ -11,9 +11,22 @@
   let activePointerId: number | null = null;
   let activeTouchId: number | null = null;
   let drawerSheetEl: HTMLDivElement | null = $state(null);
+  let dragRaf = 0;
+  let queuedDragY: number | null = null;
+  const dismissDistance = 240;
 
   const transformStyle = $derived(
-    open ? `translateY(${dragOffset}px)` : 'translateY(calc(100% + 1rem))'
+    open ? `translate3d(0, ${dragOffset}px, 0)` : 'translate3d(0, calc(100% + 1rem), 0)'
+  );
+  const backdropOpacity = $derived.by(() => {
+    if (!open && !isDragging) return 0;
+    const progress = Math.min(Math.max(dragOffset / dismissDistance, 0), 1);
+    return 1 - progress;
+  });
+  const drawerSheetClass = $derived(
+    `pointer-events-auto absolute right-0 bottom-0 left-0 flex max-h-[calc(100svh-0.75rem)] touch-none flex-col select-none [contain:layout_paint_style] ${
+      isDragging ? '' : 'transition-transform duration-200'
+    } ${open || isDragging ? 'will-change-transform' : ''}`
   );
 
   function isInteractiveTarget(target: EventTarget | null) {
@@ -51,8 +64,17 @@
     activeTouchId = touch.identifier;
   }
 
+  function flushDrag() {
+    dragRaf = 0;
+    if (queuedDragY === null) return;
+    dragOffset = Math.max(0, queuedDragY - dragStartY);
+    queuedDragY = null;
+  }
+
   function updateDrag(clientY: number) {
-    dragOffset = Math.max(0, clientY - dragStartY);
+    queuedDragY = clientY;
+    if (dragRaf) return;
+    dragRaf = window.requestAnimationFrame(flushDrag);
   }
 
   function moveDrag(event: PointerEvent) {
@@ -69,6 +91,14 @@
     }
     activePointerId = null;
     activeTouchId = null;
+    if (dragRaf) {
+      window.cancelAnimationFrame(dragRaf);
+      dragRaf = 0;
+    }
+    if (queuedDragY !== null) {
+      dragOffset = Math.max(0, queuedDragY - dragStartY);
+      queuedDragY = null;
+    }
 
     if (dragOffset > 120) {
       dragOffset = 0;
@@ -123,6 +153,10 @@
     window.addEventListener('touchcancel', onTouchEnd);
 
     return () => {
+      if (dragRaf) {
+        window.cancelAnimationFrame(dragRaf);
+        dragRaf = 0;
+      }
       window.removeEventListener('pointermove', onPointerMove);
       window.removeEventListener('pointerup', onPointerEnd);
       window.removeEventListener('pointercancel', onPointerEnd);
@@ -134,13 +168,14 @@
 </script>
 
 <div
-  class={`fixed inset-0 z-[70] block min-[1101px]:hidden ${open ? 'pointer-events-auto' : 'pointer-events-none'}`}
+  class={`fixed inset-0 z-[70] block min-[1101px]:hidden ${open || isDragging ? 'pointer-events-auto' : 'pointer-events-none'}`}
   onpointermove={moveDrag}
   onpointerup={endDrag}
   onpointercancel={endDrag}
 >
   <div
-    class="absolute inset-0 touch-none [overscroll-behavior:none]"
+    class={`absolute inset-0 touch-none [overscroll-behavior:none] bg-black/60 ${isDragging ? '' : 'transition-opacity duration-150'}`}
+    style={`opacity:${backdropOpacity};`}
     ontouchstart={startTouchDrag}
     onpointerdown={startDrag}
     onpointermove={moveDrag}
@@ -153,7 +188,7 @@
 
   <div
     bind:this={drawerSheetEl}
-    class={`pointer-events-auto absolute right-0 bottom-0 left-0 flex max-h-[calc(100svh-0.75rem)] touch-none flex-col select-none ${isDragging ? '' : 'transition-transform duration-200'}`}
+    class={drawerSheetClass}
     style={`transform:${transformStyle};`}
     ontouchstart={startTouchDrag}
     onpointerdown={startDrag}
