@@ -42,7 +42,7 @@ self.addEventListener('fetch', (event) => {
   }
 
   if (url.pathname.startsWith('/templates/')) {
-    event.respondWith(cacheFirst(request));
+    event.respondWith(networkFirst(request));
     return;
   }
 
@@ -93,16 +93,4 @@ async function staleWhileRevalidate(request) {
     .catch(() => cached);
 
   return cached || fetchPromise;
-}
-
-async function cacheFirst(request) {
-  const cache = await caches.open(RUNTIME_CACHE);
-  const cached = await cache.match(request);
-  if (cached) return cached;
-
-  const response = await fetch(request);
-  if (response.ok) {
-    cache.put(request, response.clone());
-  }
-  return response;
 }
