@@ -1,6 +1,7 @@
 ---
 import Layout from '@layouts/Layout.astro';
-import { existsSync, readdirSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
+import { existsSync, mkdirSync, readdirSync } from 'node:fs';
 import { join, relative } from 'node:path';
 
 type AssetItem = {
@@ -8,6 +9,7 @@ type AssetItem = {
   href: string;
   filename: string;
   category: string;
+  relativePath: string;
 };
 
 type AssetSection = {
@@ -24,6 +26,16 @@ function formatName(filename: string): string {
 }
 
 const publicResursiDir = join(process.cwd(), 'public', 'resursi');
+const publicResursiZipDir = join(process.cwd(), 'public', 'resursi-zips');
+
+function slugify(value: string): string {
+  return (
+    value
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '') || 'general'
+  );
+}
 
 function getRootDefs(): Pick<AssetSection, 'key' | 'title'>[] {
   if (!existsSync(publicResursiDir)) return [];
@@ -75,9 +87,31 @@ function buildItemsForRoot(rootKey: string): AssetItem[] {
         href,
         filename,
         category,
+        relativePath: afterRoot,
       } satisfies AssetItem;
     })
     .sort((a, b) => a.category.localeCompare(b.category) || a.filename.localeCompare(b.filename));
+}
+
+function ensureCategoryZip(rootKey: string, category: string, items: AssetItem[]) {
+  if (items.length === 0) return null;
+
+  const rootDir = join(publicResursiDir, rootKey);
+  const zipDir = join(publicResursiZipDir, rootKey);
+  const zipFilename = `${slugify(category)}_${slugify(rootKey)}.zip`;
+  const zipPath = join(zipDir, zipFilename);
+
+  mkdirSync(zipDir, { recursive: true });
+
+  try {
+    execFileSync('zip', ['-q', '-r', zipPath, ...items.map((item) => item.relativePath)], {
+      cwd: rootDir,
+    });
+  } catch {
+    return null;
+  }
+
+  return `/resursi-zips/${rootKey}/${zipFilename}`;
 }
 
 const rootDefs = getRootDefs();
@@ -88,212 +122,203 @@ const sections: AssetSection[] = rootDefs
     items: buildItemsForRoot(root.key),
   }))
   .filter((section) => section.items.length > 0);
+
+const categoryArchiveHrefs = new Map<string, string>();
+
+sections.forEach((section) => {
+  const categories = [...new Set(section.items.map((item) => item.category))];
+
+  categories.forEach((category) => {
+    const items = section.items.filter((item) => item.category === category);
+    const href = ensureCategoryZip(section.key, category, items);
+    if (href) categoryArchiveHrefs.set(`${section.key}:${category}`, href);
+  });
+});
 ---
 
 <Layout>
-  <main class="mx-auto min-h-screen w-full max-w-[960px] px-6 py-10 text-neutral-100">
-    <header class="mb-8">
-      <h1 class="text-3xl font-semibold tracking-tight">Asset Downloads</h1>
-      <p class="mt-2 text-sm text-neutral-400">Download logos, backgrounds, and overlays.</p>
-    </header>
+  <main
+    class="min-h-svh bg-[#0a0a0a] bg-[linear-gradient(rgba(255,255,255,0.12)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.12)_1px,transparent_1px)] bg-[size:28px_28px] px-6 py-10 text-neutral-100"
+  >
+    <div class="mx-auto w-full max-w-[1100px]">
+      <header class="mb-8 border border-neutral-800 bg-black/80 p-6 backdrop-blur-[12px] sm:p-8">
+        <div class="flex items-start justify-between gap-4 border-b border-neutral-800 pb-5">
+          <div>
+            <p class="text-[0.72rem] tracking-[0.08em] text-neutral-400 uppercase">Resources</p>
+            <h1 class="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">Asset Downloads</h1>
+          </div>
+        </div>
+      </header>
 
-    <section class="mb-8 rounded-2xl border border-neutral-800 bg-neutral-900/60 p-5">
-      <div class="flex flex-wrap items-end gap-4">
-        <label class="block min-w-[180px]">
-          <span class="mb-2 block text-xs font-semibold tracking-wide text-neutral-400 uppercase">
-            Type
-          </span>
-          <select
-            id="asset-type-filter"
-            class="w-full rounded-xl border border-neutral-800 bg-black/40 px-3 py-2 text-sm text-neutral-100"
-          >
-            <option value="" selected disabled>Select type</option>
-            {sections.map((section) => <option value={section.key}>{section.title}</option>)}
-          </select>
-        </label>
-
-        <button
-          id="asset-filter-reset"
-          type="button"
-          class="rounded-xl border border-neutral-700 px-3 py-2 text-sm text-neutral-200 hover:bg-neutral-800"
-        >
-          Reset
-        </button>
-      </div>
-    </section>
-
-    <div class="space-y-8">
-      {
-        sections.map((section) => {
-          const categories = [...new Set(section.items.map((item) => item.category))];
-
-          return (
-            <section
-              class="rounded-2xl border border-neutral-800 bg-neutral-900/60 p-5"
-              data-asset-section
-              data-section-key={section.key}
+      <section
+        class="relative z-10 mb-8 border border-neutral-800 bg-black/80 p-5 backdrop-blur-[12px] sm:p-6"
+      >
+        <div class="flex flex-wrap items-end gap-4">
+          <div class="relative min-w-[220px]">
+            <span class="mb-2 block text-[0.72rem] tracking-[0.08em] text-neutral-400 uppercase">
+              Type
+            </span>
+            <button
+              id="asset-type-trigger"
+              type="button"
+              aria-haspopup="listbox"
+              aria-expanded="false"
+              aria-controls="asset-type-menu"
+              class="flex w-full cursor-pointer items-center justify-between rounded-[0.85rem] border border-neutral-700 bg-black/75 px-4 py-3 text-sm text-neutral-100 focus-visible:border-white focus-visible:ring-1 focus-visible:ring-white focus-visible:outline-none focus-visible:ring-inset"
             >
-              <h2 class="mb-4 text-lg font-semibold text-neutral-100">{section.title}</h2>
+              <span id="asset-type-value">Select type</span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="h-4 w-4 text-neutral-400"
+                aria-hidden="true"
+              >
+                <path d="m6 9 6 6 6-6"></path>
+              </svg>
+            </button>
+            <div
+              id="asset-type-menu"
+              role="listbox"
+              tabindex="-1"
+              class="absolute top-[calc(100%+0.5rem)] left-0 hidden w-full overflow-hidden rounded-[0.85rem] border border-neutral-800 bg-neutral-950/98 p-2 backdrop-blur-[14px]"
+            >
+              {
+                sections.map((section) => (
+                  <button
+                    id={`asset-type-option-${section.key}`}
+                    type="button"
+                    role="option"
+                    data-asset-type-option
+                    data-value={section.key}
+                    data-label={section.title}
+                    aria-selected="false"
+                    class="flex w-full cursor-pointer items-center justify-between rounded-[0.7rem] px-3 py-2 text-left text-sm text-neutral-200 hover:bg-white/8 focus-visible:border-white focus-visible:ring-1 focus-visible:ring-white focus-visible:outline-none focus-visible:ring-inset"
+                  >
+                    <span>{section.title}</span>
+                  </button>
+                ))
+              }
+            </div>
+          </div>
 
-              <div class="space-y-5">
-                {categories.map((category) => (
-                  <div data-asset-category-group data-category={category}>
-                    <h3 class="mb-2 text-xs font-semibold tracking-wide text-neutral-400 uppercase">
-                      {category}
-                    </h3>
-                    <ul class="space-y-3">
-                      {section.items
-                        .filter((item) => item.category === category)
-                        .map((item) => (
-                          <li class="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-neutral-800 bg-black/30 px-4 py-3">
-                            <div class="min-w-0">
-                              <p class="truncate text-sm font-medium">{item.name}</p>
-                              <p class="truncate text-xs text-neutral-500">{item.filename}</p>
-                            </div>
-                            <div class="flex items-center gap-2">
-                              <button
-                                type="button"
-                                data-preview-open
-                                data-preview-href={item.href}
-                                data-preview-name={item.name}
-                                data-preview-filename={item.filename}
-                                class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-neutral-700 text-neutral-200 hover:bg-neutral-800"
-                                aria-label={`Preview ${item.name}`}
-                                title="Preview"
-                              >
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  viewBox="0 0 24 24"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  stroke-width="1.8"
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                  class="h-4 w-4"
-                                  aria-hidden="true"
+          <button
+            id="asset-filter-reset"
+            type="button"
+            class="cursor-pointer rounded-[0.85rem] border border-neutral-700 bg-black/75 px-4 py-3 text-sm tracking-[0.08em] text-neutral-200 uppercase focus-visible:border-white focus-visible:ring-1 focus-visible:ring-white focus-visible:outline-none focus-visible:ring-inset"
+          >
+            Reset
+          </button>
+        </div>
+      </section>
+
+      <div class="space-y-8">
+        {
+          sections.map((section) => {
+            const categories = [...new Set(section.items.map((item) => item.category))];
+
+            return (
+              <section
+                class="border border-neutral-800 bg-black/80 p-5 backdrop-blur-[12px] sm:p-6"
+                data-asset-section
+                data-section-key={section.key}
+              >
+                <div class="mb-5 border-b border-neutral-800 pb-4">
+                  <h2 class="text-lg font-semibold text-neutral-100">{section.title}</h2>
+                </div>
+
+                <div class="space-y-5">
+                  {categories.map((category) => (
+                    <div data-asset-category-group data-category={category}>
+                      <div class="mb-2 flex items-center justify-between gap-3">
+                        <h3 class="text-[0.72rem] tracking-[0.08em] text-neutral-400 uppercase">
+                          {category}
+                        </h3>
+                        {categoryArchiveHrefs.get(`${section.key}:${category}`) && (
+                          <a
+                            href={categoryArchiveHrefs.get(`${section.key}:${category}`)}
+                            download
+                            class="inline-flex cursor-pointer items-center rounded-[0.7rem] border border-neutral-700 bg-black/75 px-3 py-2 text-[0.72rem] tracking-[0.08em] text-neutral-200 uppercase focus-visible:border-white focus-visible:ring-1 focus-visible:ring-white focus-visible:outline-none focus-visible:ring-inset"
+                          >
+                            Download ZIP
+                          </a>
+                        )}
+                      </div>
+                      <ul class="space-y-3">
+                        {section.items
+                          .filter((item) => item.category === category)
+                          .map((item) => (
+                            <li class="flex flex-wrap items-center justify-between gap-3 rounded-[0.85rem] border border-neutral-800 bg-black/55 px-4 py-3">
+                              <div class="min-w-0">
+                                <p class="truncate text-sm font-medium">{item.name}</p>
+                                <p class="truncate text-xs text-neutral-500">{item.filename}</p>
+                              </div>
+                              <div class="flex items-center gap-2">
+                                <a
+                                  href={item.href}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  class="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-[0.85rem] border border-neutral-700 bg-black/75 text-neutral-200 focus-visible:border-white focus-visible:ring-1 focus-visible:ring-white focus-visible:outline-none focus-visible:ring-inset"
+                                  aria-label={`Preview ${item.name}`}
+                                  title="Preview"
                                 >
-                                  <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6" />
-                                  <circle cx="12" cy="12" r="3" />
-                                </svg>
-                              </button>
-                              <a
-                                href={item.href}
-                                download={item.filename}
-                                class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-[#50C2BE] text-neutral-900 hover:bg-[#63d2ce]"
-                                aria-label={`Download ${item.name}`}
-                                title="Download"
-                              >
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  viewBox="0 0 24 24"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  stroke-width="1.8"
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                  class="h-4 w-4"
-                                  aria-hidden="true"
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1.8"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    class="h-4 w-4"
+                                    aria-hidden="true"
+                                  >
+                                    <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6" />
+                                    <circle cx="12" cy="12" r="3" />
+                                  </svg>
+                                </a>
+                                <a
+                                  href={item.href}
+                                  download={item.filename}
+                                  class="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-[0.85rem] border border-neutral-700 bg-neutral-100 text-neutral-950 focus-visible:border-white focus-visible:ring-1 focus-visible:ring-white focus-visible:outline-none focus-visible:ring-inset"
+                                  aria-label={`Download ${item.name}`}
+                                  title="Download"
                                 >
-                                  <path d="M12 3v11m-5-4 5 5 5-5M4 20h16" />
-                                </svg>
-                              </a>
-                            </div>
-                          </li>
-                        ))}
-                    </ul>
-                  </div>
-                ))}
-              </div>
-            </section>
-          );
-        })
-      }
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1.8"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    class="h-4 w-4"
+                                    aria-hidden="true"
+                                  >
+                                    <path d="M12 3v11m-5-4 5 5 5-5M4 20h16" />
+                                  </svg>
+                                </a>
+                              </div>
+                            </li>
+                          ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            );
+          })
+        }
+      </div>
     </div>
   </main>
 
-  <dialog
-    id="asset-preview-dialog"
-    class="fixed top-1/2 left-1/2 m-0 box-border max-h-[80svh] w-fit max-w-[62vw] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-950 p-0 text-neutral-100 backdrop:bg-black/80"
-  >
-    <div class="flex items-center justify-between gap-4 border-b border-neutral-800 px-5 py-4">
-      <div class="min-w-0">
-        <p id="asset-preview-title" class="truncate text-sm font-semibold">Preview</p>
-        <p id="asset-preview-filename" class="truncate text-xs text-neutral-500"></p>
-      </div>
-      <div class="flex items-center gap-2">
-        <a
-          id="asset-preview-download"
-          href="#"
-          download
-          class="rounded-lg bg-[#50C2BE] px-3 py-1.5 text-xs font-semibold text-neutral-900 hover:bg-[#63d2ce]"
-        >
-          Download
-        </a>
-        <button
-          id="asset-preview-close"
-          type="button"
-          class="rounded-lg border border-neutral-700 px-3 py-1.5 text-xs text-neutral-200 hover:bg-neutral-800"
-        >
-          Close
-        </button>
-      </div>
-    </div>
-
-    <div id="asset-preview-body" class="p-4 sm:p-5">
-      <div id="asset-preview-body-inner" class="grid place-items-center">
-        <div
-          id="asset-preview-surface"
-          class="mx-auto w-fit rounded-xl border border-neutral-800"
-          style="background:#e5e7eb;--checker-a:#e5e7eb;--checker-b:#cfd4dc;background-image:repeating-conic-gradient(var(--checker-a) 0 25%,var(--checker-b) 0 50%,var(--checker-a) 0 75%,var(--checker-b) 0 100%);background-size:24px 24px;"
-        >
-          <img
-            id="asset-preview-image"
-            alt=""
-            class="block h-auto max-h-[calc(80svh-9.5rem)] w-auto max-w-[calc(62vw-4.5rem)] object-contain opacity-0 transition-opacity duration-150"
-            loading="eager"
-          />
-        </div>
-      </div>
-    </div>
-  </dialog>
-
   <script>
-    import '../scripts/preuzmi-resurse.ts';
+    import * as typeFilter from '../lib/preuzmi-resurse/type-filter.ts';
+    typeFilter.initAssetTypeFilter();
   </script>
-
-  <style>
-    @media (max-width: 639px) {
-      #asset-preview-dialog[open] {
-        display: flex;
-        flex-direction: column;
-      }
-
-      #asset-preview-dialog {
-        width: 100vw;
-        height: 100svh;
-        max-width: none;
-        max-height: none;
-        border-radius: 0;
-      }
-
-      #asset-preview-body {
-        flex: 1 1 auto;
-        min-height: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      #asset-preview-body-inner {
-        width: 100%;
-        display: grid;
-        place-items: center;
-      }
-
-      #asset-preview-image {
-        max-width: calc(100vw - 2rem);
-        max-height: calc(100svh - 9.5rem);
-      }
-    }
-  </style>
 </Layout>

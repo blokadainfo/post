@@ -1,0 +1,19 @@
+{
+  "id": "/",
+  "name": "BINFO Post Kreator",
+  "short_name": "BINFO Post Kreator",
+  "description": "Kreiraj sa lakoćom objave za Instagram u prepoznatljivom Blokada INFO stilu.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

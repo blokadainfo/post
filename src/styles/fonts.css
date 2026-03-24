@@ -102,9 +102,9 @@
 @font-face {
   font-family: 'Akzidenz-Grotesk Pro';
   src:
-    url('/fonts/AkzidenzGroteskPro-LigCnItalic.woff2') format('woff2'),
-    url('/fonts/AkzidenzGroteskPro-LigCnItalic.woff') format('woff'),
-    url('/fonts/AkzidenzGroteskPro-LigCnItalic.ttf') format('truetype');
+    url('/fonts/AkzidenzGroteskPro-LightCnItalic.woff2') format('woff2'),
+    url('/fonts/AkzidenzGroteskPro-LightCnItalic.woff') format('woff'),
+    url('/fonts/AkzidenzGroteskPro-LightCnItalic.ttf') format('truetype');
   font-weight: 300;
   font-style: italic;
   font-display: swap;

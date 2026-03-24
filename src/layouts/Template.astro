@@ -3,7 +3,7 @@ import '@styles/global.css';
 import '@styles/fonts.css';
 import { siteMeta } from '@lib/site';
 
-import TemplateClientMount from '@components/TemplateClientMount.astro';
+import TemplateClientMount from '@components/templates/runtime/TemplateClientMount.astro';
 ---
 
 <!doctype html>
@@ -19,7 +19,7 @@ import TemplateClientMount from '@components/TemplateClientMount.astro';
     <style>
       html,
       body {
-        background: black;
+        background: transparent;
         margin: 0;
         width: 100%;
         height: 100%;

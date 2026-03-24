@@ -15,6 +15,7 @@ export type Field =
       key: 'textSize';
       type: 'range';
       label?: string;
+      required?: boolean;
       min?: number;
       max?: number;
       step?: number;
@@ -25,6 +26,7 @@ export type Field =
       key: 'shade';
       type: 'range';
       label?: string;
+      required?: boolean;
       min?: number;
       max?: number;
       step?: number;
@@ -153,7 +155,7 @@ const RAW_TEMPLATES: TemplateInit[] = [
     fields: [f.textSize({ default: 128 }), f.paragraph()],
   },
   {
-    name: 'Caption',
+    name: 'Caption (as an overlay for story reposts)',
     path: '/templates/story/caption',
     fields: [f.textSize({ default: 100 }), f.paragraph(), f.credit()],
   },

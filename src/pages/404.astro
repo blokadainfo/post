@@ -1,21 +1,35 @@
 ---
-import Layout from '@layouts/Template.astro';
+import Layout from '@layouts/Layout.astro';
 ---
 
 <Layout>
-  <main class="grid h-full place-items-center">
-    <section class="space-y-6 text-center text-neutral-100">
-      <div>
-        <h1 class="mb-4 text-7xl font-bold tracking-tight text-[#50C2BE]">404</h1>
-        <p class="text-lg text-neutral-400">Page not found</p>
+  <main
+    class="grid min-h-svh place-items-center bg-[#0a0a0a] bg-[linear-gradient(rgba(255,255,255,0.12)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.12)_1px,transparent_1px)] bg-[size:28px_28px] px-6 py-10 select-none"
+  >
+    <section
+      class="w-full max-w-2xl border border-neutral-800 bg-black/80 p-6 text-neutral-100 backdrop-blur-[12px] sm:p-8"
+    >
+      <div class="mb-8 flex items-start justify-between gap-4 border-b border-neutral-800 pb-5">
+        <div>
+          <p class="text-[0.72rem] tracking-[0.08em] text-neutral-400 uppercase">System</p>
+          <h1 class="mt-2 text-5xl font-semibold tracking-tight sm:text-6xl">404</h1>
+        </div>
+        <p class="text-right text-[0.72rem] tracking-[0.08em] text-neutral-500 uppercase">
+          Page not found
+        </p>
       </div>
 
-      <a
-        href="/"
-        class="inline-block w-[200px] cursor-pointer rounded-2xl bg-[#50C2BE] px-4 py-2 font-semibold text-neutral-900 transition-colors hover:bg-teal-800 active:bg-[#50C2BE]"
-      >
-        Homepage
-      </a>
+      <div class="space-y-4">
+        <p class="max-w-xl text-base leading-relaxed text-neutral-300 sm:text-lg">
+          The page you requested does not exist or has been moved outside the current route map.
+        </p>
+        <a
+          href="/"
+          class="inline-flex cursor-pointer items-center rounded-[0.85rem] border border-neutral-700 bg-black/75 px-4 py-3 text-sm tracking-[0.08em] text-neutral-200 uppercase hover:border-neutral-500 focus-visible:border-white focus-visible:ring-1 focus-visible:ring-white focus-visible:outline-none focus-visible:ring-inset"
+        >
+          Return Home
+        </a>
+      </div>
     </section>
   </main>
 </Layout>

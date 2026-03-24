@@ -1,6 +1,7 @@
 ---
 import '@styles/global.css';
 import '@styles/fonts.css';
+import BrowserSupportDialog from '@components/BrowserSupportDialog.svelte';
 import { siteMeta } from '@lib/site';
 ---
 
@@ -10,17 +11,23 @@ import { siteMeta } from '@lib/site';
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href={siteMeta.favicon} />
+    <link rel="manifest" href="/manifest.webmanifest" />
     <title>{siteMeta.title}</title>
     <meta name="description" content={siteMeta.description} />
     <meta name="robots" content="noindex, nofollow" />
     <meta name="darkreader-lock" />
     <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
     <meta property="og:title" content={siteMeta.title} />
     <meta property="og:description" content={siteMeta.description} />
     <meta property="og:type" content="website" />
   </head>
   <body>
     <slot />
+    <BrowserSupportDialog client:load />
+    <script is:inline src="/sw-register.js"></script>
   </body>
 </html>
 
@@ -34,18 +41,5 @@ import { siteMeta } from '@lib/site';
 
     /* Chromium scrollbar shenanigans */
     overflow-x: hidden;
-
-    /* intro fade-in animation props */
-    opacity: 0;
-    animation: fadeIn 1s ease-in-out forwards;
-  }
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0.0001; /* weird Chromium bug if it's 0 */
-    }
-    to {
-      opacity: 1;
-    }
   }
 </style>
