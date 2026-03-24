@@ -52,6 +52,9 @@
     </span>
     <textarea
       rows={fieldConfig('paragraph')?.rows ?? 6}
+      autocomplete="off"
+      autocorrect="off"
+      spellcheck="false"
       value={paragraph}
       class="min-h-40 w-full resize-y rounded-[0.85rem] border border-neutral-700 bg-black/75 px-4 py-3 text-neutral-100 select-text focus-visible:border-white focus-visible:ring-1 focus-visible:ring-white focus-visible:outline-none focus-visible:ring-inset"
       oninput={(event) => onParagraph((event.currentTarget as HTMLTextAreaElement).value)}
@@ -65,7 +68,13 @@
       {fieldConfig('credit')?.label ?? 'Picture source / credit'}
     </span>
     <input
+      type="text"
       value={credit}
+      autocomplete="off"
+      autocapitalize="off"
+      autocorrect="off"
+      spellcheck="false"
+      inputmode="text"
       class="w-full rounded-[0.85rem] border border-neutral-700 bg-black/75 px-4 py-3 text-neutral-100 select-text focus-visible:border-white focus-visible:ring-1 focus-visible:ring-white focus-visible:outline-none focus-visible:ring-inset"
       placeholder="Blokada INFO"
       oninput={(event) => onCredit((event.currentTarget as HTMLInputElement).value)}
