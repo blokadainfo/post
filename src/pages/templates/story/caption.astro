@@ -1,8 +1,9 @@
 ---
+/* eslint-disable astro/no-set-html-directive */
 import Layout from '@layouts/Template.astro';
-import Logo from '@assets/brand/logos/logo.svg';
-import TitleLineLong from '@assets/templates/accents/title/long.svg';
-import TitleLineShort from '@assets/templates/accents/title/short.svg';
+import LogoSvg from '@assets/brand/logos/logo.svg?raw';
+import TitleLineLongSvg from '@assets/templates/accents/title/long.svg?raw';
+import TitleLineShortSvg from '@assets/templates/accents/title/short.svg?raw';
 ---
 
 <Layout viewportWidth={1080}>
@@ -25,10 +26,23 @@ import TitleLineShort from '@assets/templates/accents/title/short.svg';
 
         <!-- Accent lines + logo (flow below text) -->
         <div class="relative z-0 flex max-w-full items-end gap-10">
-          <img src={Logo.src} alt="Logo" class="mb-7 size-36 drop-shadow-lg" />
+          <span
+            role="img"
+            aria-label="Logo"
+            class="mb-7 size-36 drop-shadow-lg [&_svg]:block [&_svg]:size-full"
+            set:html={LogoSvg}
+          />
           <div class="min-w-0 flex-1 space-y-1">
-            <img src={TitleLineLong.src} alt="" aria-hidden="true" class="block h-auto w-full" />
-            <img src={TitleLineShort.src} alt="" aria-hidden="true" class="block h-auto w-5/12" />
+            <span
+              aria-hidden="true"
+              class="block w-full [&_svg]:block [&_svg]:h-auto [&_svg]:w-full"
+              set:html={TitleLineLongSvg}
+            />
+            <span
+              aria-hidden="true"
+              class="block w-5/12 [&_svg]:block [&_svg]:h-auto [&_svg]:w-full"
+              set:html={TitleLineShortSvg}
+            />
           </div>
         </div>
 
