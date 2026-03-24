@@ -28,6 +28,21 @@
     onTextSize: (value: number) => void;
     onDarken: (value: number) => void;
   }>();
+
+  function blurActiveTextField() {
+    const active = document.activeElement;
+    if (active instanceof HTMLInputElement || active instanceof HTMLTextAreaElement) {
+      active.blur();
+    }
+  }
+
+  function claimSliderInteraction(event: Event) {
+    blurActiveTextField();
+    const target = event.currentTarget;
+    if (target instanceof HTMLInputElement) {
+      target.focus({ preventScroll: true });
+    }
+  }
 </script>
 
 {#if hasField('paragraph')}
@@ -72,6 +87,8 @@
         value={darken}
         class="w-full cursor-pointer touch-auto accent-neutral-200"
         data-drawer-no-drag
+        onpointerdown={claimSliderInteraction}
+        ontouchstart={claimSliderInteraction}
         oninput={(event) => onDarken(Number((event.currentTarget as HTMLInputElement).value))}
       />
     </label>
@@ -90,6 +107,8 @@
         value={textSize}
         class="w-full cursor-pointer touch-auto accent-neutral-200"
         data-drawer-no-drag
+        onpointerdown={claimSliderInteraction}
+        ontouchstart={claimSliderInteraction}
         oninput={(event) => onTextSize(Number((event.currentTarget as HTMLInputElement).value))}
       />
     </label>
