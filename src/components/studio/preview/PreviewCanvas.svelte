@@ -1,3 +1,8 @@
+<script module lang="ts">
+  declare const __BUILD_SHA__: string;
+  export const buildSha = __BUILD_SHA__;
+</script>
+
 <script lang="ts">
   let {
     templatePath,
@@ -32,6 +37,12 @@
       <span class="sr-only">Loading preview…</span>
     </div>
   {/if}
+
+  <div
+    class="pointer-events-none absolute right-4 bottom-2 z-20 text-[0.72rem] tracking-[0.08em] text-white/50"
+  >
+    Build: {buildSha}
+  </div>
 {:else}
   <div
     class="absolute inset-4 grid place-items-center rounded-[0.85rem] border border-dashed border-neutral-700 text-neutral-400"

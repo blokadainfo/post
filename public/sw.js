@@ -1,5 +1,6 @@
-const APP_CACHE = 'binfo-post-app-v1';
-const RUNTIME_CACHE = 'binfo-post-runtime-v1';
+const VERSION = new URL(self.location.href).searchParams.get('v') || 'dev';
+const APP_CACHE = `binfo-post-app-${VERSION}`;
+const RUNTIME_CACHE = `binfo-post-runtime-${VERSION}`;
 
 const PRECACHE_URLS = ['/', '/404.html', '/favicon.svg', '/manifest.webmanifest'];
 

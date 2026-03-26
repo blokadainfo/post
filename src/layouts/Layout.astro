@@ -1,8 +1,17 @@
 ---
+import { execSync } from 'node:child_process';
 import '@styles/global.css';
 import '@styles/fonts.css';
 import BrowserSupportDialog from '@components/BrowserSupportDialog.svelte';
 import { siteMeta } from '@lib/site';
+
+const buildSha = (() => {
+  try {
+    return execSync('git rev-parse --short HEAD', { encoding: 'utf8' }).trim();
+  } catch {
+    return 'dev';
+  }
+})();
 ---
 
 <!doctype html>
@@ -56,8 +65,8 @@ import { siteMeta } from '@lib/site';
         </div>
       </div>
     </noscript>
-    <BrowserSupportDialog client:load />
-    <script is:inline src="/sw-register.js"></script>
+    <BrowserSupportDialog client:only="svelte" />
+    <script is:inline src="/sw-register.js" data-version={buildSha}></script>
     <script is:inline src="/app-reveal.js"></script>
   </body>
 </html>

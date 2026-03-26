@@ -1,13 +1,25 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
+import { execSync } from 'node:child_process';
 
 import tailwindcss from '@tailwindcss/vite';
 
 import svelte from '@astrojs/svelte';
 
+const gitSha = (() => {
+  try {
+    return execSync('git rev-parse --short HEAD', { encoding: 'utf8' }).trim();
+  } catch {
+    return 'dev';
+  }
+})();
+
 // https://astro.build/config
 export default defineConfig({
   vite: {
+    define: {
+      __BUILD_SHA__: JSON.stringify(gitSha),
+    },
     resolve: {
       alias: {
         '@assets': new URL('./src/assets', import.meta.url).pathname,
