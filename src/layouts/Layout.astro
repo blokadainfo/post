@@ -27,10 +27,38 @@ import { siteMeta } from '@lib/site';
     <meta property="og:description" content={siteMeta.description} />
     <meta property="og:type" content="website" />
   </head>
-  <body>
+  <body data-loaded="false">
+    <div
+      aria-hidden="true"
+      data-app-reveal
+      class="ease pointer-events-none fixed inset-0 z-[9998] grid place-items-center bg-black opacity-100 transition-opacity duration-[420ms]"
+    >
+      <div class="h-8 w-8 animate-spin rounded-full border-2 border-white/30 border-t-white"></div>
+    </div>
     <slot />
+    <noscript>
+      <div
+        class="fixed inset-0 z-[10000] flex items-center justify-center bg-black p-4 text-neutral-100 select-none"
+      >
+        <div
+          class="w-full max-w-md border border-neutral-800 bg-neutral-950 p-5 shadow-[0_24px_64px_rgb(0_0_0_/_0.65)]"
+        >
+          <div class="flex flex-col gap-2">
+            <p class="m-0 text-[0.72rem] tracking-[0.08em] text-neutral-400 uppercase">
+              JavaScript Required
+            </p>
+            <h2 class="m-0 text-lg font-semibold">Enable JavaScript to use this app</h2>
+            <p class="m-0 text-[0.95rem] leading-[1.7] text-neutral-300">
+              This app depends on JavaScript for editor, preview, and export flow. <br />
+              Please enable JavaScript on your browser and reload the page.
+            </p>
+          </div>
+        </div>
+      </div>
+    </noscript>
     <BrowserSupportDialog client:load />
     <script is:inline src="/sw-register.js"></script>
+    <script is:inline src="/app-reveal.js"></script>
   </body>
 </html>
 

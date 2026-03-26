@@ -3,6 +3,8 @@
 
   let dismissed = $state(false);
   let unsupported = $state(false);
+  let visible = $state(false);
+  let closingTimer: number | undefined;
 
   function isSupportedBrowser() {
     if (typeof navigator === 'undefined') return true;
@@ -26,11 +28,28 @@
 
   onMount(() => {
     unsupported = !isSupportedBrowser();
+    if (!unsupported) return;
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        visible = true;
+      });
+    });
   });
+
+  function dismiss() {
+    visible = false;
+    if (closingTimer) window.clearTimeout(closingTimer);
+    closingTimer = window.setTimeout(() => {
+      dismissed = true;
+      closingTimer = undefined;
+    }, 420);
+  }
 </script>
 
 {#if unsupported && !dismissed}
-  <div class="fixed inset-0 z-[9999] flex items-center justify-center bg-black p-4">
+  <div
+    class={`ease fixed inset-0 z-[9999] flex items-center justify-center bg-black p-4 transition-opacity duration-[420ms] ${visible ? 'opacity-100' : 'opacity-0'}`}
+  >
     <div
       class="w-full max-w-md border border-neutral-800 bg-neutral-950 p-5 text-neutral-100 shadow-2xl backdrop-blur-[12px] select-none"
     >
@@ -47,7 +66,7 @@
         <button
           type="button"
           class="cursor-pointer rounded-[0.85rem] border border-neutral-700 bg-black/75 px-4 py-3 text-sm text-neutral-200 focus-visible:border-white focus-visible:ring-1 focus-visible:ring-white focus-visible:outline-none focus-visible:ring-inset"
-          onclick={() => (dismissed = true)}
+          onclick={dismiss}
         >
           Continue anyway
         </button>
