@@ -27,7 +27,7 @@
     src={templatePath}
     width={native.w}
     height={native.h}
-    style={`transform:${transform};width:${native.w}px;height:${native.h}px;border:0;pointer-events:none;opacity:${loading ? '0' : '1'};`}
+    style={`transform:${transform};width:${native.w}px;height:${native.h}px;border:1px solid rgba(255,255,255,0.12);pointer-events:none;opacity:${loading ? '0' : '1'};`}
     scrolling="no"
   ></iframe>
 
