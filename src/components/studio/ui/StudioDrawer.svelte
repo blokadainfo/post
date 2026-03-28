@@ -30,12 +30,11 @@
   );
 
   function isInteractiveTarget(target: EventTarget | null) {
-    return (
-      target instanceof HTMLElement &&
-      !!target.closest(
-        'input, textarea, select, button, a, label, [contenteditable="true"], [data-drawer-no-drag]'
-      )
+    if (!(target instanceof HTMLElement)) return false;
+    const interactive = target.closest(
+      'input, textarea, select, button, a, label, [contenteditable="true"], [data-drawer-no-drag]'
     );
+    return !!interactive && !interactive.hasAttribute('data-drawer-drag-surface');
   }
 
   function beginDrag(startY: number) {
@@ -58,7 +57,6 @@
     if (isInteractiveTarget(event.target)) return;
     const touch = event.changedTouches[0];
     if (!touch) return;
-    event.preventDefault();
     event.stopPropagation();
     beginDrag(touch.clientY);
     activeTouchId = touch.identifier;
@@ -173,7 +171,10 @@
   onpointerup={endDrag}
   onpointercancel={endDrag}
 >
-  <div
+  <button
+    type="button"
+    aria-label="Close drawer"
+    data-drawer-drag-surface
     class={`absolute inset-0 touch-none [overscroll-behavior:none] bg-black/60 ${isDragging ? '' : 'transition-opacity duration-150'}`}
     style={`opacity:${backdropOpacity};`}
     ontouchstart={startTouchDrag}
@@ -184,7 +185,7 @@
     onclick={() => {
       if (!isDragging) onRequestClose?.();
     }}
-  ></div>
+  ></button>
 
   <div
     bind:this={drawerSheetEl}

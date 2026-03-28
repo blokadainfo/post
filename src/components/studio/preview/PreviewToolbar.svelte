@@ -21,6 +21,7 @@
   <div class="flex items-center gap-2">
     <button
       type="button"
+      aria-label="Zoom out"
       class="cursor-pointer rounded-[0.7rem] border border-neutral-700 bg-black/80 px-3 py-[0.55rem] text-neutral-200 backdrop-blur-[10px] focus-visible:border-white focus-visible:ring-1 focus-visible:ring-white focus-visible:outline-none focus-visible:ring-inset"
       onclick={onZoomOut}
       onpointerdown={(event) => event.stopPropagation()}
@@ -30,6 +31,7 @@
     <span>{Math.round(zoom * 100)}%</span>
     <button
       type="button"
+      aria-label="Zoom in"
       class="cursor-pointer rounded-[0.7rem] border border-neutral-700 bg-black/80 px-3 py-[0.55rem] text-neutral-200 backdrop-blur-[10px] focus-visible:border-white focus-visible:ring-1 focus-visible:ring-white focus-visible:outline-none focus-visible:ring-inset"
       onclick={onZoomIn}
       onpointerdown={(event) => event.stopPropagation()}
@@ -40,6 +42,7 @@
 
   <button
     type="button"
+    aria-label="Reset view"
     class="cursor-pointer rounded-[0.7rem] border border-neutral-700 bg-black/80 px-3 py-[0.55rem] text-neutral-200 backdrop-blur-[10px] focus-visible:border-white focus-visible:ring-1 focus-visible:ring-white focus-visible:outline-none focus-visible:ring-inset"
     onclick={onReset}
     onpointerdown={(event) => event.stopPropagation()}

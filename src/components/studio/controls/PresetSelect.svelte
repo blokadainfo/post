@@ -21,7 +21,7 @@
   const menuId = `preset-choice-menu-${++presetSelectCounter}`;
 
   const selectedLabel = $derived(
-    options.find((template) => template.path === value)?.name ?? 'Select preset'
+    options.find((template: PresetOption) => template.path === value)?.name ?? 'Select preset'
   );
 
   function syncHighlightedOption() {
@@ -41,7 +41,7 @@
 
   function openMenu() {
     menuOpen = true;
-    const selectedIndex = options.findIndex((template) => template.path === value);
+    const selectedIndex = options.findIndex((template: PresetOption) => template.path === value);
     setHighlightedIndex(selectedIndex >= 0 ? selectedIndex : 0);
     queueMicrotask(syncHighlightedOption);
   }

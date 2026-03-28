@@ -1,3 +1,7 @@
+<script module lang="ts">
+  let settingsFieldsCounter = 0;
+</script>
+
 <script lang="ts">
   import type { TemplateDef, FieldKey } from '@lib/templates';
 
@@ -43,17 +47,21 @@
       target.focus({ preventScroll: true });
     }
   }
+
+  const instanceId = `settings-fields-${++settingsFieldsCounter}`;
+  const paragraphId = `${instanceId}-paragraph`;
+  const creditId = `${instanceId}-credit`;
 </script>
 
 {#if hasField('paragraph')}
-  <label class="flex flex-col gap-2">
+  <label class="flex flex-col gap-2" for={paragraphId}>
     <span class="text-[0.72rem] tracking-[0.08em] text-neutral-400 uppercase">
       {fieldConfig('paragraph')?.label ?? 'Paragraph'}
     </span>
     <textarea
+      id={paragraphId}
       rows={fieldConfig('paragraph')?.rows ?? 6}
       autocomplete="off"
-      autocorrect="off"
       spellcheck="false"
       value={paragraph}
       class="min-h-40 w-full resize-y rounded-[0.85rem] border border-neutral-700 bg-black/75 px-4 py-3 text-neutral-100 select-text focus-visible:border-white focus-visible:ring-1 focus-visible:ring-white focus-visible:outline-none focus-visible:ring-inset"
@@ -63,16 +71,16 @@
 {/if}
 
 {#if hasField('credit')}
-  <label class="flex flex-col gap-2">
+  <label class="flex flex-col gap-2" for={creditId}>
     <span class="text-[0.72rem] tracking-[0.08em] text-neutral-400 uppercase">
       {fieldConfig('credit')?.label ?? 'Picture source / credit'}
     </span>
     <input
+      id={creditId}
       type="text"
       value={credit}
       autocomplete="off"
       autocapitalize="off"
-      autocorrect="off"
       spellcheck="false"
       inputmode="text"
       class="w-full rounded-[0.85rem] border border-neutral-700 bg-black/75 px-4 py-3 text-neutral-100 select-text focus-visible:border-white focus-visible:ring-1 focus-visible:ring-white focus-visible:outline-none focus-visible:ring-inset"

@@ -8,7 +8,7 @@ const revealApp = () => {
         overlay.classList.replace('opacity-100', 'opacity-0');
       });
     });
-  }, 1000);
+  }, 1500);
 };
 
 if (document.readyState === 'complete') {

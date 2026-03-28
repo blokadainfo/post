@@ -16,9 +16,20 @@ const gitSha = (() => {
 
 // https://astro.build/config
 export default defineConfig({
+  server: {
+    host: 'localhost',
+    port: 4321,
+  },
   vite: {
     define: {
       __BUILD_SHA__: JSON.stringify(gitSha),
+    },
+    server: {
+      hmr: {
+        host: 'localhost',
+        clientPort: 4321,
+        protocol: 'ws',
+      },
     },
     resolve: {
       alias: {

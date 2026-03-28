@@ -6,10 +6,23 @@ const PRECACHE_URLS = ['/', '/404.html', '/favicon.svg', '/manifest.webmanifest'
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches
-      .open(APP_CACHE)
-      .then((cache) => cache.addAll(PRECACHE_URLS))
-      .then(() => self.skipWaiting())
+    (async () => {
+      const cache = await caches.open(APP_CACHE);
+
+      await Promise.all(
+        PRECACHE_URLS.map(async (url) => {
+          try {
+            const response = await fetch(url, { cache: 'no-cache' });
+            if (!response.ok) return;
+            await cache.put(url, response.clone());
+          } catch {
+            // Ignore individual precache failures so one bad URL does not abort install.
+          }
+        })
+      );
+
+      await self.skipWaiting();
+    })()
   );
 });
 
