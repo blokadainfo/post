@@ -38,7 +38,21 @@
 
   const aspectRatio = $derived(aspectSize.w / aspectSize.h);
   const displayScale = $derived(baseScale * zoom);
+  const coverScale = $derived(
+    naturalWidth && naturalHeight
+      ? Math.max(cropWidth / naturalWidth, cropHeight / naturalHeight)
+      : 1
+  );
   const imageStyle = $derived(buildPanZoomTransform(pan.panX, pan.panY, displayScale));
+  const blurredImageStyle = $derived(buildPanZoomTransform(0, 0, coverScale));
+  const framePadding = $derived(
+    naturalWidth && naturalHeight
+      ? Math.max(18, Math.min(Math.min(naturalWidth, naturalHeight) * 0.04, 42))
+      : 24
+  );
+  const sharpMatteStyle = $derived(
+    `width:${naturalWidth + framePadding * 2}px;height:${naturalHeight + framePadding * 2}px;transform:${imageStyle};`
+  );
 
   function clamp(value: number, min: number, max: number) {
     return Math.min(max, Math.max(min, value));
@@ -238,15 +252,43 @@
     context.fillStyle = '#000000';
     context.fillRect(0, 0, canvas.width, canvas.height);
 
+    const blurredScale = canvas.width / cropWidth;
+    const blurredWidth = naturalWidth * coverScale * blurredScale;
+    const blurredHeight = naturalHeight * coverScale * blurredScale;
+    const blurredX = canvas.width / 2 - blurredWidth / 2;
+    const blurredY = canvas.height / 2 - blurredHeight / 2;
+
+    context.save();
+    context.filter = `blur(${Math.max(24, Math.round(canvas.width * 0.018))}px) brightness(0.72)`;
+    context.drawImage(imageEl, blurredX, blurredY, blurredWidth, blurredHeight);
+    context.restore();
+
     const exportScale = canvas.width / cropWidth;
     const drawWidth = naturalWidth * displayScale * exportScale;
     const drawHeight = naturalHeight * displayScale * exportScale;
     const drawX = canvas.width / 2 - drawWidth / 2 + pan.panX * exportScale;
     const drawY = canvas.height / 2 - drawHeight / 2 + pan.panY * exportScale;
 
+    drawImageMatte(context, drawX, drawY, drawWidth, drawHeight);
     context.drawImage(imageEl, drawX, drawY, drawWidth, drawHeight);
 
     onConfirm(canvas.toDataURL('image/png'));
+  }
+
+  function drawImageMatte(
+    context: CanvasRenderingContext2D,
+    x: number,
+    y: number,
+    width: number,
+    height: number
+  ) {
+    const pad = Math.max(18, Math.min(Math.min(width, height) * 0.04, 42));
+    context.save();
+    context.fillStyle = 'rgba(255,255,255,0.96)';
+    context.shadowColor = 'rgba(0,0,0,0.22)';
+    context.shadowBlur = Math.max(8, pad * 0.45);
+    context.fillRect(x - pad, y - pad, width + pad * 2, height + pad * 2);
+    context.restore();
   }
 </script>
 
@@ -289,6 +331,18 @@
           style={`width:${cropWidth}px;height:${cropHeight}px;transform:translate(-50%,-50%);`}
         >
           <div class="absolute inset-0 bg-black"></div>
+          <img
+            src={imageSrc}
+            alt=""
+            aria-hidden="true"
+            class="pointer-events-none absolute top-1/2 left-1/2 max-w-none opacity-85 blur-[28px] brightness-75 select-none"
+            style={`transform:${blurredImageStyle};`}
+            draggable="false"
+          />
+          <div
+            class="pointer-events-none absolute top-1/2 left-1/2 max-w-none bg-white shadow-[0_10px_28px_rgba(0,0,0,0.28)] select-none"
+            style={sharpMatteStyle}
+          ></div>
           <img
             bind:this={imageEl}
             src={imageSrc}
