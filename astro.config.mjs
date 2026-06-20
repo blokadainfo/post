@@ -6,6 +6,8 @@ import tailwindcss from '@tailwindcss/vite';
 
 import svelte from '@astrojs/svelte';
 
+const tailwindPlugins = /** @type {any} */ (tailwindcss());
+
 const gitSha = (() => {
   try {
     return execSync('git rev-parse --short HEAD', { encoding: 'utf8' }).trim();
@@ -31,6 +33,9 @@ export default defineConfig({
         protocol: 'ws',
       },
     },
+    optimizeDeps: {
+      include: ['nspell'],
+    },
     resolve: {
       alias: {
         '@assets': new URL('./src/assets', import.meta.url).pathname,
@@ -41,7 +46,7 @@ export default defineConfig({
         '@styles': new URL('./src/styles', import.meta.url).pathname,
       },
     },
-    plugins: [tailwindcss()],
+    plugins: tailwindPlugins,
   },
 
   integrations: [svelte()],

@@ -12,3 +12,7 @@ export const siteMeta = {
     'Kreiraj sa lakoćom objave za Instagram u prepoznatljivom Blokada INFO stilu – direktno iz web pregledača.',
   locale: 'sr',
 };
+
+export const editorTextInput = {
+  spellcheckLanguage: 'sr-Latn',
+};

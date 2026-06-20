@@ -1,5 +1,6 @@
 <script lang="ts">
   import ImageCropDialog from '../dialogs/ImageCropDialog.svelte';
+  import SpellcheckReviewDialog from '../dialogs/SpellcheckReviewDialog.svelte';
   import PreviewFrame from '../preview/PreviewFrame.svelte';
   import ExportSidebarContent from '../sidebars/ExportSidebarContent.svelte';
   import PresetSidebarContent from '../sidebars/PresetSidebarContent.svelte';
@@ -22,6 +23,8 @@
     syncTextSize,
     toggleMobilePanel,
   } from '@lib/studio/studio-state';
+  import { normalizeSerbianQuotationMarks } from '@lib/spellcheck/quotes';
+  import type { SpellcheckIssue } from '@lib/spellcheck/serbian';
 
   let studio = $state(createStudioState());
   const activeAspect = $derived(getActiveAspect(studio));
@@ -36,8 +39,42 @@
 
   type PreviewFrameHandle = { snapshot: (scale?: number) => Promise<Blob> };
   let previewRef: PreviewFrameHandle | null = null;
+  let spellcheckReviewOpen = $state(false);
+  let spellcheckIssues = $state<SpellcheckIssue[]>([]);
+  let spellcheckApproved = $state(false);
+  let approvedParagraph = '';
 
   async function onGenerate() {
+    const shouldCheckSpelling = !spellcheckApproved || approvedParagraph !== studio.paragraph;
+
+    if (shouldCheckSpelling) {
+      studio.isGenerating = true;
+      try {
+        const { checkSerbianLatinText } = await import('@lib/spellcheck/serbian');
+        studio.paragraph = normalizeSerbianQuotationMarks(studio.paragraph);
+        const issues = await checkSerbianLatinText(studio.paragraph);
+        if (issues.length) {
+          spellcheckIssues = issues;
+          spellcheckReviewOpen = true;
+          return;
+        }
+      } catch (error) {
+        console.error(
+          'Spellcheck failed. Export was stopped so the text is not skipped by accident.',
+          error
+        );
+        return;
+      } finally {
+        studio.isGenerating = false;
+      }
+    }
+
+    spellcheckApproved = false;
+    approvedParagraph = '';
+    await exportSnapshot();
+  }
+
+  async function exportSnapshot() {
     if (!previewRef) return;
     studio.isGenerating = true;
 
@@ -46,10 +83,27 @@
       downloadBlob(blob, buildFilename());
     } catch (error) {
       console.error('Snapshot failed', error);
-      alert('Snapshot failed. Check your template page console for errors.');
     } finally {
       studio.isGenerating = false;
     }
+  }
+
+  function cancelSpellcheckReview() {
+    spellcheckReviewOpen = false;
+    spellcheckIssues = [];
+  }
+
+  function syncSpellcheckReview(paragraph: string, issues: SpellcheckIssue[]) {
+    studio.paragraph = paragraph;
+    spellcheckIssues = issues;
+  }
+
+  function continueAfterSpellcheckReview(paragraph: string) {
+    spellcheckReviewOpen = false;
+    studio.paragraph = paragraph;
+    spellcheckApproved = true;
+    approvedParagraph = paragraph;
+    void onGenerate();
   }
 
   function buildFilename() {
@@ -156,4 +210,13 @@
   aspectSize={activeAspect.size}
   onCancel={() => closeCropDialog(studio)}
   onConfirm={(dataUrl) => applyCroppedImage(studio, dataUrl)}
+/>
+
+<SpellcheckReviewDialog
+  open={spellcheckReviewOpen}
+  paragraph={studio.paragraph}
+  issues={spellcheckIssues}
+  onCancel={cancelSpellcheckReview}
+  onReviewChange={syncSpellcheckReview}
+  onContinue={continueAfterSpellcheckReview}
 />

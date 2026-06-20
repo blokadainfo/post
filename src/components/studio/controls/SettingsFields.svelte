@@ -3,6 +3,9 @@
 </script>
 
 <script lang="ts">
+  import { tick } from 'svelte';
+  import { editorTextInput } from '@lib/site';
+  import { normalizeSerbianQuotationMarks } from '@lib/spellcheck/quotes';
   import type { TemplateDef, FieldKey } from '@lib/templates';
 
   const {
@@ -51,6 +54,60 @@
   const instanceId = `settings-fields-${++settingsFieldsCounter}`;
   const paragraphId = `${instanceId}-paragraph`;
   const creditId = `${instanceId}-credit`;
+
+  async function handleNormalizedTextInput(
+    target: HTMLInputElement | HTMLTextAreaElement,
+    onChange: (value: string) => void
+  ) {
+    const normalizedValue = normalizeSerbianQuotationMarks(target.value);
+
+    if (normalizedValue === target.value) {
+      onChange(target.value);
+      return;
+    }
+
+    const selectionStart = target.selectionStart;
+    const selectionEnd = target.selectionEnd;
+
+    onChange(normalizedValue);
+    await tick();
+    target.setSelectionRange(selectionStart, selectionEnd);
+  }
+
+  function handleNormalizedPaste(event: ClipboardEvent, onChange: (value: string) => void) {
+    const target = event.currentTarget;
+    if (
+      !(target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) ||
+      !event.clipboardData
+    ) {
+      return;
+    }
+
+    event.preventDefault();
+
+    const pastedText = normalizeSerbianQuotationMarks(event.clipboardData.getData('text'));
+    const selectionStart = target.selectionStart ?? target.value.length;
+    const selectionEnd = target.selectionEnd ?? selectionStart;
+
+    target.setRangeText(pastedText, selectionStart, selectionEnd, 'end');
+    onChange(target.value);
+  }
+
+  function handleParagraphInput(event: Event) {
+    void handleNormalizedTextInput(event.currentTarget as HTMLTextAreaElement, onParagraph);
+  }
+
+  function handleParagraphPaste(event: ClipboardEvent) {
+    handleNormalizedPaste(event, onParagraph);
+  }
+
+  function handleCreditInput(event: Event) {
+    void handleNormalizedTextInput(event.currentTarget as HTMLInputElement, onCredit);
+  }
+
+  function handleCreditPaste(event: ClipboardEvent) {
+    handleNormalizedPaste(event, onCredit);
+  }
 </script>
 
 {#if hasField('paragraph')}
@@ -61,11 +118,13 @@
     <textarea
       id={paragraphId}
       rows={fieldConfig('paragraph')?.rows ?? 6}
+      lang={editorTextInput.spellcheckLanguage}
       autocomplete="off"
       spellcheck="false"
       value={paragraph}
       class="min-h-40 w-full resize-y rounded-[0.85rem] border border-neutral-700 bg-black/75 px-4 py-3 text-neutral-100 select-text focus-visible:border-white focus-visible:ring-1 focus-visible:ring-white focus-visible:outline-none focus-visible:ring-inset"
-      oninput={(event) => onParagraph((event.currentTarget as HTMLTextAreaElement).value)}
+      oninput={handleParagraphInput}
+      onpaste={handleParagraphPaste}
     ></textarea>
   </label>
 {/if}
@@ -79,13 +138,15 @@
       id={creditId}
       type="text"
       value={credit}
+      lang={editorTextInput.spellcheckLanguage}
       autocomplete="off"
       autocapitalize="off"
       spellcheck="false"
       inputmode="text"
       class="w-full rounded-[0.85rem] border border-neutral-700 bg-black/75 px-4 py-3 text-neutral-100 select-text focus-visible:border-white focus-visible:ring-1 focus-visible:ring-white focus-visible:outline-none focus-visible:ring-inset"
       placeholder="Blokada INFO"
-      oninput={(event) => onCredit((event.currentTarget as HTMLInputElement).value)}
+      oninput={handleCreditInput}
+      onpaste={handleCreditPaste}
     />
   </label>
 {/if}

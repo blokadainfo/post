@@ -16,9 +16,7 @@ if ('serviceWorker' in navigator) {
 
         const cacheKeys = await caches.keys();
         await Promise.all(
-          cacheKeys
-            .filter((key) => key.startsWith('binfo-post-'))
-            .map((key) => caches.delete(key))
+          cacheKeys.filter((key) => key.startsWith('binfo-post-')).map((key) => caches.delete(key))
         );
         return;
       }
